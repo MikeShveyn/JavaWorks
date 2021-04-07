@@ -11,9 +11,9 @@ public class NonStandardTruck extends Truck implements Node {
 	public NonStandardTruck() 
 	{
 		super();
-		this.height=this.getRundomNumber(200, 600);
-		this.width=this.getRundomNumber(300, 600);
-		this.length=this.getRundomNumber(800, 1500);
+		this.height=this.getRundomNumber(400, 800);
+		this.width=this.getRundomNumber(400, 800);
+		this.length=this.getRundomNumber(900, 1500);
 		System.out.println("Creating " + this);
 	}
 	
@@ -92,6 +92,7 @@ public class NonStandardTruck extends Truck implements Node {
 				Package tempPackage  = this.getPackages().get(0);
 				if(tempPackage.getStatus() == Status.COLLECTION)
 				{
+					
 					collectPackage(tempPackage);
 				}
 				else if(tempPackage.getStatus() == Status.DISTRIBUTION)
@@ -113,8 +114,8 @@ public class NonStandardTruck extends Truck implements Node {
 		
 		this.setTimeLeft(CalcTimeLeft(p));
 		
-		System.out.println("NonStandardTruck " + Integer.toString(this.getTruckID()) + "delivering package " + Integer.toString(p.getPackageId())
-								+ "time to arrive: " + this.getTimeLeft());
+		System.out.println("NonStandardTruck " + Integer.toString(this.getTruckID()) + " delivering package " + Integer.toString(p.getPackageId())
+								+ " time to arrive: " + this.getTimeLeft());
 	}
 
 
@@ -122,9 +123,9 @@ public class NonStandardTruck extends Truck implements Node {
 	public void deliverPackage(Package p) {
 		// TODO Auto-generated method stub
 		p.setStatus(Status.DELIVERED);
-		p.addTracking(this, p.getStatus());
-		
-		System.out.println("NonStandardTruck " + Integer.toString(this.getTruckID()) + "has delivered package " + Integer.toString(p.getPackageId()));
+		p.addTracking(null, p.getStatus());
+		this.getPackages().clear();
+		System.out.println("NonStandardTruck " + Integer.toString(this.getTruckID()) + " has delivered package " + Integer.toString(p.getPackageId()));
 	}
 	
 	private int CalcTimeLeft(Package p)

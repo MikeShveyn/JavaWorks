@@ -1,6 +1,7 @@
 package components2;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import components1.Address;
 import components1.Priority;
@@ -128,10 +129,11 @@ public class MainOffice {
 	private void addPackage()
 	{
 		Package pack;
+		Random rand = new Random();
 		//all setup random 
 		Priority[] priority = Priority.values();
 		String[] packageTypes = {"SmallPackage", "StandardPackage", "NonStandardPackage"};
-		String randomPackage = packageTypes[getRundomNumber(0,2)];
+		String randomPackage = packageTypes[rand.nextInt(packageTypes.length)];
 		
 		Address sender = new Address(getRundomNumber(0, hub.getBranches().size() - 1), getRundomNumber(100000, 999999)); 
 		Address reciver = new Address(getRundomNumber(0, hub.getBranches().size() - 1),getRundomNumber(100000, 999999));
@@ -144,6 +146,7 @@ public class MainOffice {
 			case "SmallPackage":
 				boolean acknol = getRundomBool();
 				pack = new SmallPackage(pr, sender,reciver,acknol);
+				pack.addTracking(null, pack.getStatus());
 				
 				for(Branch br: hub.getBranches())
 				{
@@ -159,7 +162,7 @@ public class MainOffice {
 			case "StandardPackage":
 				double weight = getRundomDouble(1,10);
 				pack = new StandardPackage(pr, sender, reciver, weight);
-				
+				pack.addTracking(null, pack.getStatus());
 				for(Branch br: hub.getBranches())
 				{
 					if(br.getBranchId() == sender.getZip())
@@ -173,6 +176,7 @@ public class MainOffice {
 				
 			case "NonStandardPackage":
 				pack = new NonStandardPackage(pr, sender, reciver, getRundomNumber(1, 500), getRundomNumber(1, 1000),getRundomNumber(1, 400));
+				pack.addTracking(null, pack.getStatus());
 				hub.getBranches().get(0).getListPackages().add(pack);
 				System.out.println("Creating " + pack.toString() );
 				break;

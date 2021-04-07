@@ -60,7 +60,7 @@ public class Van extends Truck implements Node{
 	public void deliverPackage(Package p) {
 		// TODO Auto-generated method stub
 		p.setStatus(Status.DELIVERED);
-		p.addTracking(this, p.getStatus());
+		p.addTracking(null, p.getStatus());
 		//change status to customer
 		
 		System.out.println("Van " + Integer.toString(this.getTruckID()) + " has delivered package "+ Integer.toString(p.getPackageId())

@@ -43,6 +43,10 @@ public class Tracking {
 	//methods
 	@Override
 	public String toString() {
+		if(node == null)
+		{
+			return time + ":  CUSTOMER, status " + status;
+		}
 		return time + ":  " + node.Print() + ", status " + status;
 		//add fields
 	}

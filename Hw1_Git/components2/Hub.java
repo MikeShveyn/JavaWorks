@@ -160,14 +160,19 @@ public class Hub implements Node{
 			if(temp.get(i) instanceof NonStandardPackage)
 			{
 				NonStandardPackage pack = ((NonStandardPackage)temp.get(i));
-				if(truck.getHeight() <= pack.getHeight() && truck.getLength() <= pack.getLength() && truck.getWidth() <= pack.getWidth())
+				if(truck.getHeight() >= pack.getHeight() && truck.getLength() >= pack.getLength() && truck.getWidth() >= pack.getWidth())
 				{
+					System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 					collectPackage(temp.get(i));
 					temp.get(i).addTracking(truck, temp.get(i).getStatus());
+					
 					truck.getPackages().add(pack);
-					temp.remove(temp.get(i));
 					truck.setAvaliable(false);
-					System.out.println("NonStandartTruck"  + tr.getTruckID() + " has collected package " + temp.get(i).getPackageId());
+					
+					truck.setTimeLeft(truck.getRundomNumber(1, 10));
+					System.out.println("NonStandartTruck"  + tr.getTruckID() + " is collecting package " + temp.get(i).getPackageId() + " time to arrive: " + tr.getTimeLeft() );
+					
+					temp.remove(temp.get(i));
 					break;
 				}
 				
