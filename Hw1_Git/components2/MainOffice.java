@@ -6,35 +6,71 @@ import java.util.Random;
 import components1.Address;
 import components1.Priority;
 
+
+/**
+ * ID 336249743
+ * ID 336249628
+ * 
+ * Class MainOffice represent Brain of project 
+ * MainOffice create all brunches trucks and packages and keep track of them
+ * Main office work by clock ticking , each second apply work() function to each object implements Node interface 
+ * also add new packages and store tracking report
+ * 
+ * clock - clock of all project
+ * hub - represent central brunch (field control office) 
+ * packages - list of all packages that have been created by the system
+ */
+
+
 public class MainOffice {
 	static int clock;
 	Hub hub;
 	ArrayList<Package> packages;
 	
+	
+	//constructor ------------------------------------------------------------------------------------
 	public MainOffice(int branches, int trucksForBranch)
 	{
+		/**
+		 * Set clock to 0
+		 * ArrayList of packages to null
+		 * 
+		 * Create Hub and trucks for hub 
+		 * Create Branches and trucks for each brunch
+		 * 
+		 */
+		
 		clock = 0;
 		packages = new ArrayList<Package>();
 		
 		//HUB
 		hub = new Hub();
 		Branch brancheHub=hub.getBranches().get(0);
+		
+		//create trucks for hub
 		for(int i=0;i<trucksForBranch;i++)
 		{
+			//create StandartTruck
 			StandardTruck str = new StandardTruck();
 			str.setDefaultHub(brancheHub);
+			
+			//Add StandartTruck to hub
 			brancheHub.getListTrucks().add(str);
 			
 		}
 		
+		//Create and add NonStandartTruck to hub
 		brancheHub.getListTrucks().add(new NonStandardTruck());
 		System.out.println();
 		
-		//branches + tracks
+		
+		//Create branches and truck for each one
 		for(int i=1;i<=branches;i++)
 		{
+			//add brunch
 			hub.getBranches().add(new Branch());
 			
+			//add Vans for branch
 			for(int j=0;j<trucksForBranch;j++)
 			{
 				hub.getBranches().get(i).getListTrucks().add(new Van());
@@ -45,13 +81,15 @@ public class MainOffice {
 		
 	}
 
-	//getters setters
+	
+	
+	//getters setters ------------------------------------------------------------------------------------
 	public int getClock() {
 		return clock;
 	}
 
 	public void setClock(int clock) {
-		this.clock = clock;
+		MainOffice.clock = clock;
 	}
 
 	public Hub getHub() {
@@ -72,82 +110,86 @@ public class MainOffice {
 
 
 	
-	//methods
-	@Override
-	public String toString() {
-		return "MainOffice [clock=" + clock + ", packages=" + packages + "]";
-	}
-
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		MainOffice other = (MainOffice) obj;
-		if (clock != other.clock)
-			return false;
-		if (packages == null) {
-			if (other.packages != null)
-				return false;
-		} else if (!packages.equals(other.packages))
-			return false;
-		return true;
-	}
-	
+	//Methods---------------------------------------------------------------------------------------------------------
 	
 	public void play(int playTime)
 	{
+		/**
+		 * Play Start Clock with tick() 
+		 * each 5 seconds add new package to the system
+		 * by the end of play time loop print tracking report
+		 */
 		System.out.println("========================== START ==========================");
 		for(int i = 0; i < playTime; i++)
 		{
 			if(i % 5 == 0)
 			{
+				//Add new package to the system
 				addPackage();
 			}
+			
+			//Move clock and apply work() in each Node implemented object
 			tick();
 			
 		}
 		
+		//print report
 		printReport();
 	}
 	
+	
+	
 	private void tick()
 	{
+		/**
+		 * Manage time of the system and apply work to all Node implemented objects
+		 */
 		//clock setup
 		System.out.println(clockString());
 		this.setClock(clock + 1);
 		
-		//work in all node
+		//apply work() in hub and than in all Node implemented objects
 		hub.work();
 		
 	}
 	
+	
+	
 	private void addPackage()
-	{
-		Package pack;
+	{	
+		/**
+		 * Add Random package to the system
+		 * Create random package 
+		 * Depend on its type each package gets different properties 
+		 */
+		
+		//setup
 		Random rand = new Random();
-		//all setup random 
+		Package pack;
+		
+		//all common package properties setup random 
+		Address sender = new Address(getRundomNumber(0, hub.getBranches().size() - 1), getRundomNumber(100000, 999999)); 
+		Address reciver = new Address(getRundomNumber(0, hub.getBranches().size() - 1),getRundomNumber(100000, 999999));
+		
 		Priority[] priority = Priority.values();
+		Priority pr = priority[getRundomNumber(0, priority.length - 1 )];
+		
 		String[] packageTypes = {"SmallPackage", "StandardPackage", "NonStandardPackage"};
 		String randomPackage = packageTypes[rand.nextInt(packageTypes.length)];
 		
-		Address sender = new Address(getRundomNumber(0, hub.getBranches().size() - 1), getRundomNumber(100000, 999999)); 
-		Address reciver = new Address(getRundomNumber(0, hub.getBranches().size() - 1),getRundomNumber(100000, 999999));
-		Priority pr = priority[getRundomNumber(0, priority.length - 1 )];
 		
-		
-		//additional setup
+		//additional setup by package type
 		switch(randomPackage)
 		{
 			case "SmallPackage":
+				//additional setup
 				boolean acknol = getRundomBool();
+				
+				//pack setup
 				pack = new SmallPackage(pr, sender,reciver,acknol);
 				pack.addTracking(null, pack.getStatus());
 				
+				//add packs to closest brunch system
 				for(Branch br: hub.getBranches())
 				{
 					if(br.getBranchId() == sender.getZip())
@@ -160,9 +202,14 @@ public class MainOffice {
 				break;
 				
 			case "StandardPackage":
+				//additional setup
 				double weight = getRundomDouble(1,10);
+				
+				//pack setup
 				pack = new StandardPackage(pr, sender, reciver, weight);
 				pack.addTracking(null, pack.getStatus());
+				
+				//add packs to closest brunch system
 				for(Branch br: hub.getBranches())
 				{
 					if(br.getBranchId() == sender.getZip())
@@ -175,11 +222,15 @@ public class MainOffice {
 				break;
 				
 			case "NonStandardPackage":
+				//pack setup
 				pack = new NonStandardPackage(pr, sender, reciver, getRundomNumber(1, 500), getRundomNumber(1, 1000),getRundomNumber(1, 400));
 				pack.addTracking(null, pack.getStatus());
+				
+				//add package to Hub
 				hub.getBranches().get(0).getListPackages().add(pack);
 				System.out.println("Creating " + pack.toString() );
 				break;
+				
 				
 			default:
 				pack = null;
@@ -188,42 +239,21 @@ public class MainOffice {
 		}
 		
 		
-		//add to packages
+		//add to packages list
 		if(pack != null)
-		{
-			
 			packages.add(pack);
-		}
 		else
-		{
 			System.err.println("Main office Switch case Bug!!!");
-		}
-		
 		
 	}
 	
-	
-	private int getRundomNumber(int min,int max) {
-		return (int)((Math.random()*(max-min))+min);
-	}
-	
-	private double getRundomDouble(int min,int max) {
-		return ((Math.random()*(max-min))+min);
-	}
-	
-	private boolean getRundomBool() {
-		if(getRundomNumber(0,1) == 1)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
+
 	
 	private void printReport()
 	{
+		/**
+		 * Print tracking of all packages was created by the system
+		 */
 		System.out.println("========================================!!!STOP!!!=========================================================");
 		for(Package p : packages)
 		{
@@ -233,15 +263,74 @@ public class MainOffice {
 		
 	}
 	
+	
+	
 	private String clockString()
 	{
+		/**
+		 * return real Clock(String) representation of integer clock
+		 */
 		int min = clock/60;
 		int sec = clock%60;
 		return Integer.toString(min) + ":" + Integer.toString(sec);
 	}
 	
+	//HELP FUCNTION ------------------------------------------------------------------------------------
+	
+	private int getRundomNumber(int min,int max)
+	{
+		 /**
+		  * RETURN RANDOM INT IN RANGE
+		  */
+		  return (int)((Math.random()*(max-min))+min);
+	}
+  
+	 
+	
+	private double getRundomDouble(int min,int max)
+	{
+		/**
+		 * RETURN RANDOM DOUBLE IN RANGE
+		 */
+		return ((Math.random()*(max-min))+min);
+	}
 	
 	
+	private boolean getRundomBool()
+	{
+		/**
+		 * RETURN RANDOM BOOL
+		 */
+		if(getRundomNumber(0,1) == 1)
+			return true;
+		else
+			return false;
+	}
+	
+	
+	//default methods ------------------------------------------------------------------------------------
+		@Override
+		public String toString() {
+			return "MainOffice [clock=" + clock + ", packages=" + packages + "]";
+		}
+
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			MainOffice other = (MainOffice) obj;
+			if (packages == null) {
+				if (other.packages != null)
+					return false;
+			} else if (!packages.equals(other.packages))
+				return false;
+			return true;
+		}
 	
 	
 }

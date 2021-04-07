@@ -1,8 +1,17 @@
 package components1;
 
+/**
+ * ID 336249743
+ * ID 336249628
+ * 
+ * Class Address represents address of customer
+ * zip = brunch number using to connect package to closest brunch
+ * street = 6 digit number using to calculate time between different addresses
+ */
+
 public class Address {
-	int zip;//branch number
-	int street;//6 digit number
+	int zip;
+	int street;
 	
 	
 	//constructor
@@ -39,7 +48,7 @@ public class Address {
 		
 	}
 
-
+	//default methods
 	@Override
 	public String toString() {
 		return " " + zip + "-" + street;

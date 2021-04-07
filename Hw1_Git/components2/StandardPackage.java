@@ -3,6 +3,20 @@ package components2;
 import components1.Address;
 import components1.Priority;
 
+
+/**
+ * ID 336249743
+ * ID 336249628
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+
+
 public class StandardPackage extends Package {
 
 	private double weight;

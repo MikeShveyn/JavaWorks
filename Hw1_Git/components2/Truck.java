@@ -2,6 +2,20 @@ package components2;
 
 import java.util.ArrayList;
 
+
+/**
+ * ID 336249743
+ * ID 336249628
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+
+
 public abstract class Truck {
 	
 	private static int idCounter=2000;
