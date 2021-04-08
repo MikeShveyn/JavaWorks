@@ -9,13 +9,13 @@ import components1.Status;
 /**
  * ID 336249743
  * ID 336249628
- * 
- * 
- * 
- * 
- * 
- * 
- * 
+ *  
+ * Branch class represent local branch with Vans 
+ * Branch implements Node methods 
+ * idCOunter - static variable that counts amount of instances
+ * BranchId - calculated by idCOunter
+ * listTrucks - list of Vans
+ * listPackages - list of packages in brunch
  */
 
 
@@ -27,6 +27,7 @@ public class Branch implements Node{
 	private ArrayList<Package> listPackages;
 	
 	
+	//Constructor------------------------------------------------------------------------------------------------------------
 	public Branch()
 	{	
 		
@@ -51,7 +52,7 @@ public class Branch implements Node{
 	}
 
 	
-	//getters setters
+	//getters setters---------------------------------------------------------------------------------------------------------------
 	
 	public int getBranchId() {
 		return branchId;
@@ -86,55 +87,47 @@ public class Branch implements Node{
 	}
 	
 	
-	//methods
-	@Override
-	public String toString() {
-		return " branchName: " + branchName + ", trucks=" + listTrucks.size()
-				+ ", packages=" + listPackages.size();
-	}
-
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Branch other = (Branch) obj;
-		if (branchId != other.branchId)
-			return false;
-		if (branchName == null) {
-			if (other.branchName != null)
-				return false;
-		} else if (!branchName.equals(other.branchName))
-			return false;
-		if (listPackages == null) {
-			if (other.listPackages != null)
-				return false;
-		} else if (!listPackages.equals(other.listPackages))
-			return false;
-		if (listTrucks == null) {
-			if (other.listTrucks != null)
-				return false;
-		} else if (!listTrucks.equals(other.listTrucks))
-			return false;
-		return true;
-	}
 	
 	
+	//methods----------------------------------------------------------------------------------------------------------
 	
 	@Override
 	public void work() {
+		/**
+		 *  Node method implementation
+		 *  Apply work to each Van
+		 *  Go throw local packages decide collect or deliver
+		 */
 		
+		//Apply work to each van
+		ApplyWork();
+		
+		//Go throw local packages decide collect or deliver
+		PackagesLogic();
+	}
+	
+	
+	private void ApplyWork()
+	{
+		/**
+		 * Apply work to each van
+		 */
 		for(Truck tr: listTrucks)
 		{
 			((Node)tr).work();
 		}
+	}
+	
+	private void PackagesLogic()
+	{
+		/**
+		 * Go throw local packages decide collect or deliver
+		 */
+		
 		ArrayList<Package>temp=this.listPackages;
 		for(int i=0;i<temp.size();i++)
 		{
+			//depends of package status send truck to  collect or deliver it
 			if(temp.get(i).getStatus() == Status.CREATION)
 			{
 				collectPackage(temp.get(i));
@@ -142,6 +135,7 @@ public class Branch implements Node{
 			else if(temp.get(i).getStatus() == Status.DELIVERY)
 			{
 				deliverPackage(temp.get(i));
+				//remove package from local storage
 				this.getListPackages().remove(temp.get(i));
 			}
 		}
@@ -150,23 +144,26 @@ public class Branch implements Node{
 	
 	@Override
 	public void collectPackage(Package p) {
-		// TODO Auto-generated method stub
+		/**
+		 *  Node method implementation
+		 *  Go throw Vans , find available van and send it to collect package
+		 */
+		
 		for(Truck tr: this.listTrucks)
 		{
+			//Find available Van
 			if(tr.isAvaliable())
 			{
-				tr.getPackages().add(p);
 				//truck setup
+				tr.getPackages().add(p);
 				tr.setTimeLeft((p.getSenderAdress().getStreet() % 10) + 1);
 				tr.setAvaliable(false);
+				
 				//package setup
 				p.setStatus(Status.COLLECTION);
-				if(tr instanceof Van)
-				{
-					p.addTracking((Van)tr, p.getStatus());
-				}
+				p.addTracking((Van)tr, p.getStatus());
 				
-				//work van
+				//Print massage
 				System.out.println("Van " + Integer.toString(tr.getTruckID()) +  " is collecting package " + Integer.toString(p.getPackageId())
 				+ ", time to arrive: " + Integer.toString(tr.getTimeLeft()));
 				
@@ -177,19 +174,25 @@ public class Branch implements Node{
 
 	@Override
 	public void deliverPackage(Package p) {
-		// TODO Auto-generated method stub
+		/**
+		 *  Node method implementation
+		 *  Go throw Vans , find available van and send it to deliver package
+		 */
+		
 		for(Truck tr: this.listTrucks)
 		{
 			if(tr.isAvaliable())
 			{
-				tr.getPackages().add(p);
 				//truck setup
+				tr.getPackages().add(p);
 				tr.setTimeLeft((p.getDestinationAdress().getStreet() % 10) + 1);
 				tr.setAvaliable(false);
+				
 				//package setup
 				p.setStatus(Status.DISTRIBUTION);
 				p.addTracking((Van)tr, p.getStatus());
-				//work van
+				
+				//print massage
 				System.out.println("Van " + Integer.toString(tr.getTruckID()) +  " is delivering package " + Integer.toString(p.getPackageId())
 				+ ", time to arrive: " + Integer.toString(tr.getTimeLeft()));
 				
@@ -201,11 +204,50 @@ public class Branch implements Node{
 
 	@Override
 	public String Print() {
-		// TODO Auto-generated method stub
+		/**
+		 * Node method implementation
+		 */
 		return "Branch " + Integer.toString(this.getBranchId());
 	}
 	
+	
+	//default methods-----------------------------------------------------------------------------------------------------------------------
+	
+		@Override
+		public String toString() {
+			return " branchName: " + branchName + ", trucks=" + listTrucks.size()
+					+ ", packages=" + listPackages.size();
+		}
 
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Branch other = (Branch) obj;
+			if (branchId != other.branchId)
+				return false;
+			if (branchName == null) {
+				if (other.branchName != null)
+					return false;
+			} else if (!branchName.equals(other.branchName))
+				return false;
+			if (listPackages == null) {
+				if (other.listPackages != null)
+					return false;
+			} else if (!listPackages.equals(other.listPackages))
+				return false;
+			if (listTrucks == null) {
+				if (other.listTrucks != null)
+					return false;
+			} else if (!listTrucks.equals(other.listTrucks))
+				return false;
+			return true;
+		}
 	
 	
 }

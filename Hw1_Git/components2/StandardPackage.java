@@ -8,12 +8,9 @@ import components1.Priority;
  * ID 336249743
  * ID 336249628
  * 
- * 
- * 
- * 
- * 
- * 
- * 
+ * StandardPackage represent StandardPackage 
+ * weight- double that store weight of the package , used by Hub to calculate StandardTrucks load 
+ *
  */
 
 
@@ -21,6 +18,7 @@ public class StandardPackage extends Package {
 
 	private double weight;
 	
+	//constructor
 	public StandardPackage(Priority priority, Address senderAddress, Address destinationAddress, double weight) {
 		super(priority, senderAddress, destinationAddress);
 		this.weight = weight;
@@ -37,7 +35,7 @@ public class StandardPackage extends Package {
 	}
 
 
-	//methods
+	//default methods
 
 	@Override
 	public boolean equals(Object obj) {

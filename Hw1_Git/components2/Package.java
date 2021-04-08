@@ -9,18 +9,20 @@ import components1.*;
  * ID 336249743
  * ID 336249628
  * 
- * 
- * 
- * 
- * 
- * 
- * 
+ * Package represent abstract package consist of parameters and methods
+ * idCounter - static variable to count instances
+ * packageId - package id based on idCounter
+ * priority - priority of package(enum Priority)
+ * status - status of package(enum Status)
+ * senderAdress , desinationAdress - consist of zip and street address 
+ * used by tracks to calculate time and by MainOffice to set package to closest  local branch
+ * tracking - list of tracking 
  */
 
 
 public abstract class Package {
 	private static int idCounter=1000;
-	private  int packageID; // check where define
+	private  int packageID; 
 	private Priority priority;
 	private Status status;
 	private Address senderAdress;
@@ -41,8 +43,11 @@ public abstract class Package {
 	}
 
 	
-	//getters setters
-
+	//getters setters--------------------------------------------------------------------------------------------------------
+	public int getPackageId() {
+		return this.packageID;
+	}
+	
 	public Priority getPriority() {
 		return priority;
 	}
@@ -92,21 +97,30 @@ public abstract class Package {
 	}
 
 	
-	//methods
+	//methods------------------------------------------------------------------------------------------------
 	
 	public void addTracking(Node node, Status status)
 	{
+		/**
+		 * Add tracking point (time, location, status)
+		 */
 		tracking.add(new Tracking(MainOffice.clock ,node, status));
 	}
 	
 	public void printTracking()
 	{
+		/**
+		 * Print each tracking point of package
+		 */
 		for(Tracking track : tracking)
 		{
 			System.out.println(track);
 		}
 	}
 	
+	
+	
+	//default methods----------------------------------------------------------------------------------------------------------------
 	
 	@Override
 	public String toString()
@@ -150,9 +164,7 @@ public abstract class Package {
 	}
 
 
-	public int getPackageId() {
-		return this.packageID;
-	}
+
 	
 	
 }

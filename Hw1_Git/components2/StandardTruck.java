@@ -159,7 +159,7 @@ public class StandardTruck extends Truck implements Node{
 	@Override
 	public void collectPackage(Package p) 
 	{
-		if(p.getStatus() != Status.DELIVERY)
+		if(p.getStatus() == Status.BRANCH_STORAGE)
 		{
 			// TODO Auto-generated method stub
 			p.setStatus(Status.HUB_TRANSPORT);

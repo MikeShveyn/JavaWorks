@@ -8,12 +8,8 @@ import components1.Priority;
  * ID 336249743
  * ID 336249628
  * 
- * 
- * 
- * 
- * 
- * 
- * 
+ * SmallPackage represent smallPackage 
+ * acknowledge - bool that toggle massage if send or not massage  to customer that package was delivered
  */
 
 
@@ -37,7 +33,7 @@ public class SmallPackage extends Package {
 	}
 
 
-	//methods
+	//default methods ----------------------------------------------------------------------------------------------
 
 	@Override
 	public boolean equals(Object obj) {
