@@ -8,11 +8,14 @@ import java.util.ArrayList;
  * ID 336249628
  * 
  * 
- * 
- * 
- * 
- * 
- * 
+ * Truck Class represent abstract truck
+ * idCounter - static variable to count instances of different trucks
+ * truckId -  truck id based on IdCounter
+ * licensePlate - 6 digit integer
+ * truckModel - random model
+ * available - boolean that show if track can be used by branch or hub
+ * timLeft - count to time between locations
+ * packages - list of packages
  */
 
 
@@ -26,8 +29,8 @@ public abstract class Truck {
 	private int timeLeft;
 	private ArrayList<Package> packages;
 	
-	//constructors
 	
+	//constructors------------------------------------------------------------------------------------
 	public Truck()
 	{
 		this.truckModel='M'+Integer.toString(this.getRundomNumber(0,4));
@@ -36,9 +39,7 @@ public abstract class Truck {
 		this.packages=new ArrayList<Package>();
 		this.truckID=idCounter;
 		idCounter++;
-		//timeLeft
 	}
-	
 	
 	
 	public Truck(String licensePlate, String truckModel)
@@ -47,13 +48,14 @@ public abstract class Truck {
 		this.truckModel=truckModel;
 		this.avaliable=true;
 		this.packages=new ArrayList<Package>();
-		//truckID,timeLeft
+
 	}
 	
-	//Help function
+	//Help function------------------------------------------------------------------------------------------
 	public int getRundomNumber(int min,int max) {
 		return (int)((Math.random()*(max-min))+min);
 	}
+	
 	
 	private String makeLicense() {
 		int num1=getRundomNumber(100,999);
@@ -62,7 +64,7 @@ public abstract class Truck {
 		return Integer.toString(num1)+"-"+Integer.toString(num2)+"-"+Integer.toString(num3);
 	}
 
-	//Getters Setters
+	//Getters Setters-------------------------------------------------------------------------------------
 
 	public int getTruckID() {
 		return truckID;
@@ -133,8 +135,12 @@ public abstract class Truck {
 	public void setPackages(ArrayList<Package> packages) {
 		this.packages = packages;
 	}
-
-
+	
+	
+	
+	
+	
+	//default functions----------------------------------------------------------------------------------------------------
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

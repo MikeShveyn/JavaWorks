@@ -13,12 +13,10 @@ import components1.Status;
  * ID 336249743
  * ID 336249628
  * 
- * 
- * 
- * 
- * 
- * 
- * 
+ * StandardTruck represent truck that connected to Hub
+ * maxWeight - max Truck Load
+ * destination - current destination of StandardTruck , HUB OR LOCAL BRUNCH
+ * defaultHub - default destination - Hub
  */
 
 
@@ -29,6 +27,7 @@ public class StandardTruck extends Truck implements Node{
 	private Branch defaultHub;
 	
 	
+	//constructor--------------------------------------------------------------------------
 	public StandardTruck ()
 	{
 		super();
@@ -48,7 +47,7 @@ public class StandardTruck extends Truck implements Node{
 		System.out.println("Creating " + this);
 	}
 	
-	//getters setters
+	//getters setters-----------------------------------------------------------------------------
 	public Branch getDefaultHub() {
 		return defaultHub;
 	}
@@ -72,33 +71,16 @@ public class StandardTruck extends Truck implements Node{
 		this.destination = destination;
 	}
 	
-	//methods
-	@Override
-	public String toString() {
-		return "StandardTruck [" +super.toString() + " maxWeight=" + maxWeight +  "]";
-	}
 	
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		StandardTruck other = (StandardTruck) obj;
-		if (destination == null) {
-			if (other.destination != null)
-				return false;
-		} else if (!destination.equals(other.destination))
-			return false;
-		if (maxWeight != other.maxWeight)
-			return false;
-		return true;
-	}
+	//Node methods---------------------------------------------------------------------------------------
 	@Override
 	public void work()
 	{
+		/**
+		 * Time and availability check 
+		 * UNload Packages at current branch
+		 *  Depends on location load new packages from Hub or collect packages from branch 
+		 */
 		if(this.isAvaliable()==false) 
 		{
 			//time left setup
@@ -108,19 +90,12 @@ public class StandardTruck extends Truck implements Node{
 			//if trip is ended
 			if(this.getTimeLeft() == 0)
 			{	
-				//message that truck  made it to the destination
-				System.out.println("StandardTruck" + Integer.toString(this.getTruckID()) + " arrived to " + this.destination.getBranchName());
-				//move all trucks packages to the destination
-				for(Package p: this.getPackages())
-				{
-					deliverPackage(p);
-				}
-				
-				this.getPackages().clear();
-				
+				//UNload packages at current branch
+				UnLoadPackages();
+				 
+				//check where truck currently is
 				if(this.destination.getBranchName()=="HUB")
 				{
-					
 					System.out.println("StandardTruck " + this.getTruckID() + "  unloaded packages at HUB");
 					this.setAvaliable(true);
 				}
@@ -130,16 +105,16 @@ public class StandardTruck extends Truck implements Node{
 					System.out.println("StandardTruck " + this.getTruckID() + "  unloaded packages at " + this.destination.getBranchName());
 					if(WeightCheck())
 					{
+						//collect all packages 
 						ArrayList<Package> temp=this.getDestination().getListPackages();
 						for(int i=0;i<temp.size();i++)
 						{
 							collectPackage(temp.get(i));
 						}
 						
-						
+						//print relevant message
 						System.out.println("StandardTruck " + this.getTruckID() + "  loaded packages at " + this.destination.getBranchName());
 						// change destination
-					
 						this.setDestination(this.defaultHub);
 						
 						//Generate timeLeft 
@@ -156,15 +131,37 @@ public class StandardTruck extends Truck implements Node{
 		
 	}
 	
+	private void UnLoadPackages()
+	{
+		/**
+		 * Unload packages at current branch
+		 */
+		System.out.println("StandardTruck" + Integer.toString(this.getTruckID()) + " arrived to " + this.destination.getBranchName());
+		//move all trucks packages to the destination
+		for(Package p: this.getPackages())
+		{
+			deliverPackage(p);
+		}
+		
+		//remove packages from truck
+		this.getPackages().clear();
+	}
+	
 	@Override
 	public void collectPackage(Package p) 
 	{
+		/**
+		 * check if package can be taken and change its status
+		 */
 		if(p.getStatus() == Status.BRANCH_STORAGE)
 		{
-			// TODO Auto-generated method stub
+			//change package status
 			p.setStatus(Status.HUB_TRANSPORT);
 			p.addTracking(this, p.getStatus());
+			//add package to truck list
 			this.getPackages().add(p);
+
+			//remove package from branch
 			ArrayList<Package> temp = this.getDestination().getListPackages();
 			if(temp.contains(p))
 			{
@@ -177,11 +174,14 @@ public class StandardTruck extends Truck implements Node{
 	@Override
 	public void deliverPackage(Package p)
 	{
-		// TODO Auto-generated method stub
+		/**
+		 * Depends on destination change package status
+		 */
 		if(this.destination.getBranchName()=="HUB")
 		{
 			p.setStatus(Status.HUB_STORAGE);
 			p.addTracking(destination, p.getStatus());
+			//add to package to hub
 			this.getDestination().getListPackages().add(p);
 			
 			
@@ -190,44 +190,74 @@ public class StandardTruck extends Truck implements Node{
 		{
 			p.setStatus(Status.DELIVERY);
 			p.addTracking(destination, p.getStatus());
+			//add package to local branch
 			this.getDestination().getListPackages().add(p);
 			
 		}	
 	}
 	
+	
+	//help function -----------------------------------------------------------------------------------------------------
 	private boolean WeightCheck()
 	{
+		/**
+		 * Calculate weight of all packages and return if could be loaded to Truck or nor
+		 */
 		double sum = 0;
+		//calculate total weight
 		for(Package p: this.destination.getListPackages())
 		{
 			if(p.getStatus() != Status.DELIVERY)
 			{
+				//different packages has different weight values
 				if(p instanceof StandardPackage)
-				{
 					sum += ((StandardPackage)p).getWeight();
-				}
 				else
-				{
 					sum+=1;
-				}
 			}
-			
-			
 		}
 		
+		//weight check
 		if(sum >= this.maxWeight)
-		{
 			return false;
-		}
 		else
-		{
 			return true;
-		}
 	}
+	
+	
 	@Override
 	public String Print() {
-		// TODO Auto-generated method stub
+		/**
+		 * print massage
+		 */
 		return "StandardTruck " + Integer.toString(this.getTruckID());
 		
 	}
+	
+	
+	//default methods-----------------------------------------------------------------------------------
+	
+		@Override
+		public String toString() {
+			return "StandardTruck [" +super.toString() + " maxWeight=" + maxWeight +  "]";
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (!super.equals(obj))
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			StandardTruck other = (StandardTruck) obj;
+			if (destination == null) {
+				if (other.destination != null)
+					return false;
+			} else if (!destination.equals(other.destination))
+				return false;
+			if (maxWeight != other.maxWeight)
+				return false;
+			return true;
+		}
 }
