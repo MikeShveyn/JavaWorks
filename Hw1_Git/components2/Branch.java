@@ -19,7 +19,7 @@ import components1.Status;
  */
 
 
-public class Branch implements Node{
+public class Branch extends Thread implements Node{
 	private static int idCounter=-1;
 	private int branchId;
 	private String branchName;
@@ -30,7 +30,7 @@ public class Branch implements Node{
 	//Constructor------------------------------------------------------------------------------------------------------------
 	public Branch()
 	{	
-		
+		super();
 		this.branchId = idCounter;
 		this.branchName="Branch " + Integer.toString(branchId);
 		listTrucks = new ArrayList<Truck>();
@@ -42,7 +42,8 @@ public class Branch implements Node{
 	
 	
 	public Branch(String branchName)
-	{
+	{	
+		super();
 		this.branchId = idCounter;
 		this. branchName = branchName;
 		listTrucks = new ArrayList<Truck>();
@@ -90,6 +91,13 @@ public class Branch implements Node{
 	
 	
 	//methods----------------------------------------------------------------------------------------------------------
+	//Runnable interface
+	@Override
+	public void run()
+	{
+		// TODO Auto-generated method stub
+		work();
+	}
 	
 	@Override
 	public void work() {
@@ -156,7 +164,7 @@ public class Branch implements Node{
 			{
 				//truck setup
 				tr.getPackages().add(p);
-				tr.setTimeLeft((p.getSenderAdress().getStreet() % 10) + 1);
+				tr.setTimeLeft(((p.getSenderAdress().getStreet() % 10) + 1) * 10);
 				tr.setAvaliable(false);
 				
 				//package setup
@@ -185,7 +193,7 @@ public class Branch implements Node{
 			{
 				//truck setup
 				tr.getPackages().add(p);
-				tr.setTimeLeft((p.getDestinationAdress().getStreet() % 10) + 1);
+				tr.setTimeLeft(((p.getDestinationAdress().getStreet() % 10) + 1) * 10);
 				tr.setAvaliable(false);
 				
 				//package setup
@@ -248,6 +256,8 @@ public class Branch implements Node{
 				return false;
 			return true;
 		}
+
+	
 	
 	
 }

@@ -118,7 +118,7 @@ public class NonStandardTruck extends Truck implements Node {
 		p.addTracking(this, p.getStatus());
 		
 		//set time
-		this.setTimeLeft(CalcTimeLeft(p));
+		this.setTimeLeft(CalcTimeLeft(p) * 10);
 		
 		//print massage
 		System.out.println("NonStandardTruck " + Integer.toString(this.getTruckID()) + " delivering package " + Integer.toString(p.getPackageId())
@@ -184,6 +184,13 @@ public class NonStandardTruck extends Truck implements Node {
 			if (width != other.width)
 				return false;
 			return true;
+		}
+		
+		//Runnable interface
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			
 		}
 
 		

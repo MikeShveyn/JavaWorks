@@ -22,14 +22,15 @@ import components1.Priority;
  */
 
 
-public class MainOffice {
+public class MainOffice implements Runnable{
 	static int clock;
 	Hub hub;
 	ArrayList<Package> packages;
-	
+	boolean isRun = false;
+	int packagesNum;
 	
 	//constructor ------------------------------------------------------------------------------------
-	public MainOffice(int branches, int trucksForBranch)
+	public MainOffice(int branches, int trucksForBranch, int packsNum)
 	{
 		/**
 		 * Set clock to 0
@@ -42,7 +43,7 @@ public class MainOffice {
 		
 		clock = 0;
 		packages = new ArrayList<Package>();
-		
+		packagesNum = packsNum;
 		//HUB
 		hub = new Hub();
 		Branch brancheHub=hub.getBranches().get(0);
@@ -111,21 +112,24 @@ public class MainOffice {
 
 	
 	//Methods---------------------------------------------------------------------------------------------------------
-	
-	public void play(int playTime)
+	//Runnable interface
+	@Override
+	public void run() 
 	{
+		// TODO Auto-generated method stub
 		/**
 		 * Play Start Clock with tick() 
 		 * each 5 seconds add new package to the system
 		 * by the end of play time loop print tracking report
 		 */
 		System.out.println("========================== START ==========================");
-		for(int i = 0; i < playTime; i++)
+		while(isRun)
 		{
-			if(i % 5 == 0)
+			if(this.packagesNum > 0 && clock % 5 == 0)
 			{
 				//Add new package to the system
 				addPackage();
+				//Update GUI
 			}
 			
 			//Move clock and apply work() in each Node implemented object
@@ -135,7 +139,9 @@ public class MainOffice {
 		
 		//print report
 		printReport();
+		
 	}
+
 	
 	
 	
@@ -147,9 +153,12 @@ public class MainOffice {
 		//clock setup
 		System.out.println(clockString());
 		this.setClock(clock + 1);
-		
+		//sleep
+		try {
+			Thread.sleep(500);
+		}catch(InterruptedException e) {}
 		//apply work() in hub and than in all Node implemented objects
-		hub.work();
+		//hub.work();
 		
 	}
 	
@@ -241,7 +250,10 @@ public class MainOffice {
 		
 		//add to packages list
 		if(pack != null)
+		{
 			packages.add(pack);
+			this.packagesNum --;
+		}
 		else
 			System.err.println("Main office Switch case Bug!!!");
 		
@@ -331,6 +343,9 @@ public class MainOffice {
 				return false;
 			return true;
 		}
+
+
+	
 	
 	
 }

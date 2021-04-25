@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 
 
-public abstract class Truck {
+public abstract class Truck extends Thread implements Runnable{
 	
 	private static int idCounter=2000;
 	private int truckID;
@@ -32,7 +32,8 @@ public abstract class Truck {
 	
 	//constructors------------------------------------------------------------------------------------
 	public Truck()
-	{
+	{	
+		super();
 		this.truckModel='M'+Integer.toString(this.getRundomNumber(0,4));
 		this.licensePlate=this.makeLicense();
 		this.avaliable=true;
@@ -44,6 +45,7 @@ public abstract class Truck {
 	
 	public Truck(String licensePlate, String truckModel)
 	{	
+		super();
 		this.licensePlate=licensePlate;
 		this.truckModel=truckModel;
 		this.avaliable=true;
@@ -174,7 +176,7 @@ public abstract class Truck {
 		return true;
 	}
 
-
+	
 
 	@Override
 	public String toString() {

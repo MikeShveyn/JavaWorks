@@ -118,7 +118,7 @@ public class StandardTruck extends Truck implements Node{
 						this.setDestination(this.defaultHub);
 						
 						//Generate timeLeft 
-						this.setTimeLeft(this.getRundomNumber(1, 6));
+						this.setTimeLeft(this.getRundomNumber(1, 6) * 10);
 						//print relevant message
 						System.out.println("StandardTruck" + Integer.toString(this.getTruckID()) + "  is on it's way to the HUB "+"time to arrive: "
 									+ this.getTimeLeft());
@@ -259,5 +259,12 @@ public class StandardTruck extends Truck implements Node{
 			if (maxWeight != other.maxWeight)
 				return false;
 			return true;
+		}
+		
+		//Runnable interface
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			
 		}
 }

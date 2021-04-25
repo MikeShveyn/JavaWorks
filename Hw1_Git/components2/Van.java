@@ -54,7 +54,7 @@ public class Van extends Truck implements Node{
 	private void MainLogic()
 	{
 		/**
-		 * depends on package status collect or delvier package
+		 * depends on package status collect or deliver package
 		 */
 		Package tempPackage  = this.getPackages().get(0);
 		if(tempPackage.getStatus() == Status.COLLECTION)
@@ -91,7 +91,7 @@ public class Van extends Truck implements Node{
 	@Override
 	public void deliverPackage(Package p) {
 		/**
-		 * chage package status and return truck to be available
+		 * change package status and return truck to be available
 		 */
 		//package status
 		p.setStatus(Status.DELIVERED);
@@ -120,6 +120,13 @@ public class Van extends Truck implements Node{
 	@Override
 	public String toString() {
 		return "Van [" +super.toString() + "]";
+	}
+
+	//Runnable interface
+	@Override
+	public void run() {
+		
+		
 	}
 
 }

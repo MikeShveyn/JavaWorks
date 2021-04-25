@@ -17,7 +17,7 @@ import components1.Status;
  */
 
 
-public class Hub implements Node{
+public class Hub extends Thread implements Node {
 	
 	private ArrayList<Branch> branches;
 	private int branchIndex;
@@ -25,7 +25,8 @@ public class Hub implements Node{
 	
 	//constructor
 	public Hub()
-	{
+	{	
+		super();
 		branches = new ArrayList<Branch>();
 		branches.add(new Branch("HUB"));
 		//hub is brunch in index 0 so we start count local brunches from 1 index
@@ -45,6 +46,13 @@ public class Hub implements Node{
 	
 	
 	//methods-----------------------------------------------------------------------------------------------------------------------
+	
+	//Runnable interface
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		work();
+	}
 	
 	@Override
 	public void work() 
@@ -181,7 +189,7 @@ public class Hub implements Node{
 		
 		//Setup truck
 		truck.setAvaliable(false);
-		truck.setTimeLeft(truck.getRundomNumber(1, 10));
+		truck.setTimeLeft(truck.getRundomNumber(1, 10) * 10);
 		
 		//Print Massages
 		System.out.println("StandatdTruck "+ truck.getTruckID() + " loaded packages at HUB");
@@ -210,15 +218,15 @@ public class Hub implements Node{
 				NonStandardPackage pack = ((NonStandardPackage)temp.get(i));
 				
 				//Check Package fit Truck
-				if(truck.getHeight() >= pack.getHeight() && truck.getLength() >= pack.getLength() && truck.getWidth() >= pack.getWidth())
-				{
+				//if(truck.getHeight() >= pack.getHeight() && truck.getLength() >= pack.getLength() && truck.getWidth() >= pack.getWidth())
+				//{
 					//Package tracking
 					collectPackage(temp.get(i));
 					temp.get(i).addTracking(truck, temp.get(i).getStatus());
 					
 					//Setup truck time and print massage
 					truck.setAvaliable(false);
-					truck.setTimeLeft(truck.getRundomNumber(1, 10));
+					truck.setTimeLeft(truck.getRundomNumber(1, 10) * 10);
 					System.out.println("NonStandartTruck"  + tr.getTruckID() + " is collecting package " + temp.get(i).getPackageId() + " time to arrive: " + tr.getTimeLeft() );
 					
 					//Add package to truck and remove from hub
@@ -226,7 +234,7 @@ public class Hub implements Node{
 					temp.remove(temp.get(i));
 					
 					break;
-				}
+				//}
 				
 			}
 		}
@@ -313,5 +321,7 @@ public class Hub implements Node{
 				return false;
 			return true;
 		}
+		
+	
 
 }
