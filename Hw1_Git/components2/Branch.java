@@ -1,9 +1,12 @@
 package components2;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.util.ArrayList;
 
 import components1.Node;
 import components1.Status;
+import components1.ThreadBand;
 
 
 /**
@@ -19,13 +22,13 @@ import components1.Status;
  */
 
 
-public class Branch extends Thread implements Node{
+public class Branch extends Thread implements Node, ThreadBand{
 	private static int idCounter=-1;
 	private int branchId;
 	private String branchName;
 	private ArrayList<Truck> listTrucks;
 	private ArrayList<Package> listPackages;
-	
+	boolean isRun = true;
 	
 	//Constructor------------------------------------------------------------------------------------------------------------
 	public Branch()
@@ -37,6 +40,7 @@ public class Branch extends Thread implements Node{
 		listPackages = new ArrayList<Package>();
 		idCounter++;
 		System.out.println("Creating Branch " + Integer.toString(branchId) + this);
+		
 		
 	}
 	
@@ -50,9 +54,10 @@ public class Branch extends Thread implements Node{
 		listPackages = new ArrayList<Package>();
 		idCounter++;
 		System.out.println("Creating Branch " + Integer.toString(branchId) + this);
+		
 	}
 
-	
+	 
 	//getters setters---------------------------------------------------------------------------------------------------------------
 	
 	public int getBranchId() {
@@ -95,9 +100,71 @@ public class Branch extends Thread implements Node{
 	@Override
 	public void run()
 	{
-		// TODO Auto-generated method stub
+	
+		while(true)
+		{
+			synchronized(this)
+			{
+				while(!isRun)
+				{
+					try {
+						wait();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			
 		work();
+		
+		}
 	}
+	
+	@Override
+	public void Sleep()
+	{
+		for(Truck tr: this.listTrucks)
+		{
+			if(tr instanceof Van) {((Van)tr).Sleep();}
+			if(tr instanceof NonStandardTruck) {((NonStandardTruck)tr).Sleep();}
+			if(tr instanceof StandardTruck) {((StandardTruck)tr).Sleep();}
+		}
+		
+		
+		try {
+			Thread.sleep(500);
+		}catch(InterruptedException e) {}
+		
+	}
+	
+	
+	
+
+	
+	@Override
+	synchronized public void StopMe() {
+		// TODO Auto-generated method stub
+		isRun = false;
+	}
+
+
+	@Override
+	synchronized public void ResumeMe() {
+		// TODO Auto-generated method stub
+		isRun = true;
+		notify();
+	}
+
+
+	@Override
+	synchronized public void DrawMe(Graphics g) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	
 	
 	@Override
 	public void work() {
@@ -112,6 +179,7 @@ public class Branch extends Thread implements Node{
 		
 		//Go throw local packages decide collect or deliver
 		PackagesLogic();
+		
 	}
 	
 	
@@ -126,7 +194,7 @@ public class Branch extends Thread implements Node{
 		}
 	}
 	
-	private void PackagesLogic()
+	synchronized private void PackagesLogic()
 	{
 		/**
 		 * Go throw local packages decide collect or deliver
@@ -135,6 +203,7 @@ public class Branch extends Thread implements Node{
 		ArrayList<Package>temp=this.listPackages;
 		for(int i=0;i<temp.size();i++)
 		{
+			
 			//depends of package status send truck to  collect or deliver it
 			if(temp.get(i).getStatus() == Status.CREATION)
 			{
@@ -151,62 +220,70 @@ public class Branch extends Thread implements Node{
 	
 	
 	@Override
-	public void collectPackage(Package p) {
+	 public void collectPackage(Package p) {
 		/**
 		 *  Node method implementation
 		 *  Go throw Vans , find available van and send it to collect package
 		 */
 		
-		for(Truck tr: this.listTrucks)
-		{
-			//Find available Van
-			if(tr.isAvaliable())
+		/*
+		 * synchronized(this) {
+		 */
+			for(Truck tr: this.listTrucks)
 			{
-				//truck setup
-				tr.getPackages().add(p);
-				tr.setTimeLeft(((p.getSenderAdress().getStreet() % 10) + 1) * 10);
-				tr.setAvaliable(false);
-				
-				//package setup
-				p.setStatus(Status.COLLECTION);
-				p.addTracking((Van)tr, p.getStatus());
-				
-				//Print massage
-				System.out.println("Van " + Integer.toString(tr.getTruckID()) +  " is collecting package " + Integer.toString(p.getPackageId())
-				+ ", time to arrive: " + Integer.toString(tr.getTimeLeft()));
-				
-				break;
+				//Find available Van
+				if(tr.isAvaliable())
+				{
+					//truck setup
+					tr.getPackages().add(p);
+					tr.setTimeLeft(((p.getSenderAdress().getStreet() % 10) + 1) * 10);
+					tr.setAvaliable(false);
+					
+					//package setup
+					p.setStatus(Status.COLLECTION);
+					p.addTracking((Van)tr, p.getStatus());
+					
+					//Print massage
+					System.out.println("Van " + Integer.toString(tr.getTruckID()) +  " is collecting package " + Integer.toString(p.getPackageId())
+					+ ", time to arrive: " + Integer.toString(tr.getTimeLeft()));
+					
+					break;
+				}
 			}
-		}
+		//}
+		
 	}
 
 	@Override
-	public void deliverPackage(Package p) {
+	 public void deliverPackage(Package p) {
 		/**
 		 *  Node method implementation
 		 *  Go throw Vans , find available van and send it to deliver package
 		 */
-		
-		for(Truck tr: this.listTrucks)
-		{
-			if(tr.isAvaliable())
+		/*
+		 * synchronized(this) {
+		 */
+			for(Truck tr: this.listTrucks)
 			{
-				//truck setup
-				tr.getPackages().add(p);
-				tr.setTimeLeft(((p.getDestinationAdress().getStreet() % 10) + 1) * 10);
-				tr.setAvaliable(false);
-				
-				//package setup
-				p.setStatus(Status.DISTRIBUTION);
-				p.addTracking((Van)tr, p.getStatus());
-				
-				//print massage
-				System.out.println("Van " + Integer.toString(tr.getTruckID()) +  " is delivering package " + Integer.toString(p.getPackageId())
-				+ ", time to arrive: " + Integer.toString(tr.getTimeLeft()));
-				
-				break;
+				if(tr.isAvaliable())
+				{
+					//truck setup
+					tr.getPackages().add(p);
+					tr.setTimeLeft(((p.getDestinationAdress().getStreet() % 10) + 1) * 10);
+					tr.setAvaliable(false);
+					
+					//package setup
+					p.setStatus(Status.DISTRIBUTION);
+					p.addTracking((Van)tr, p.getStatus());
+					
+					//print massage
+					System.out.println("Van " + Integer.toString(tr.getTruckID()) +  " is delivering package " + Integer.toString(p.getPackageId())
+					+ ", time to arrive: " + Integer.toString(tr.getTimeLeft()));
+					
+					break;
+				}
 			}
-		}
+		//}
 	}
 
 
@@ -257,6 +334,8 @@ public class Branch extends Thread implements Node{
 			return true;
 		}
 
+
+		
 	
 	
 	

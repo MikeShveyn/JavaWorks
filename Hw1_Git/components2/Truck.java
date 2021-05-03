@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 
 
-public abstract class Truck extends Thread implements Runnable{
+public abstract class Truck extends Thread {
 	
 	private static int idCounter=2000;
 	private int truckID;
@@ -28,7 +28,7 @@ public abstract class Truck extends Thread implements Runnable{
 	private boolean avaliable;
 	private int timeLeft;
 	private ArrayList<Package> packages;
-	
+	boolean isRun = true;
 	
 	//constructors------------------------------------------------------------------------------------
 	public Truck()

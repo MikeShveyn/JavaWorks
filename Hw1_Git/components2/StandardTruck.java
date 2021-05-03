@@ -2,10 +2,12 @@ package components2;
 
 
 
+import java.awt.Graphics;
 import java.util.ArrayList;
 
 import components1.Node;
 import components1.Status;
+import components1.ThreadBand;
 
 
 
@@ -20,7 +22,7 @@ import components1.Status;
  */
 
 
-public class StandardTruck extends Truck implements Node{
+public class StandardTruck extends Truck implements Node, ThreadBand{
 	
 	private int maxWeight;
 	private Branch destination;
@@ -71,10 +73,62 @@ public class StandardTruck extends Truck implements Node{
 		this.destination = destination;
 	}
 	
+	//Runnable interface
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		while(true)
+		{
+			synchronized(this) {
+				while(!isRun)
+				{
+					try {
+						wait();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+					
+			work();
+		}
+	}
+	
+	
+ 
+	
+	@Override
+	 public void Sleep()
+	{
+		try {
+			Thread.sleep(500);
+		}catch(InterruptedException e) {}
+		
+	}
+	
+	@Override
+	synchronized public void StopMe() {
+		// TODO Auto-generated method stub
+		isRun = false;
+	}
+
+	@Override
+	synchronized public void ResumeMe() {
+		// TODO Auto-generated method stub
+		isRun = true;
+		notify();
+	}
+
+	@Override
+	synchronized public void DrawMe(Graphics g) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	//Node methods---------------------------------------------------------------------------------------
 	@Override
-	public void work()
+	synchronized public void work()
 	{
 		/**
 		 * Time and availability check 
@@ -136,6 +190,7 @@ public class StandardTruck extends Truck implements Node{
 		/**
 		 * Unload packages at current branch
 		 */
+	
 		System.out.println("StandardTruck" + Integer.toString(this.getTruckID()) + " arrived to " + this.destination.getBranchName());
 		//move all trucks packages to the destination
 		for(Package p: this.getPackages())
@@ -145,29 +200,34 @@ public class StandardTruck extends Truck implements Node{
 		
 		//remove packages from truck
 		this.getPackages().clear();
+		
 	}
 	
 	@Override
-	public void collectPackage(Package p) 
+	 public void collectPackage(Package p) 
 	{
 		/**
 		 * check if package can be taken and change its status
 		 */
-		if(p.getStatus() == Status.BRANCH_STORAGE)
-		{
-			//change package status
-			p.setStatus(Status.HUB_TRANSPORT);
-			p.addTracking(this, p.getStatus());
-			//add package to truck list
-			this.getPackages().add(p);
-
-			//remove package from branch
-			ArrayList<Package> temp = this.getDestination().getListPackages();
-			if(temp.contains(p))
+		/*
+		 * synchronized(p) {
+		 */
+			if(p.getStatus() == Status.BRANCH_STORAGE)
 			{
-				temp.remove(p);
+				//change package status
+				p.setStatus(Status.HUB_TRANSPORT);
+				p.addTracking(this, p.getStatus());
+				//add package to truck list
+				this.getPackages().add(p);
+	
+				//remove package from branch
+				ArrayList<Package> temp = this.getDestination().getListPackages();
+				if(temp.contains(p))
+				{
+					temp.remove(p);
+				}
 			}
-		}
+		//}
 		
 	}
 	
@@ -177,23 +237,27 @@ public class StandardTruck extends Truck implements Node{
 		/**
 		 * Depends on destination change package status
 		 */
-		if(this.destination.getBranchName()=="HUB")
-		{
-			p.setStatus(Status.HUB_STORAGE);
-			p.addTracking(destination, p.getStatus());
-			//add to package to hub
-			this.getDestination().getListPackages().add(p);
-			
-			
-		}
-		else
-		{
-			p.setStatus(Status.DELIVERY);
-			p.addTracking(destination, p.getStatus());
-			//add package to local branch
-			this.getDestination().getListPackages().add(p);
-			
-		}	
+		/*
+		 * synchronized(p) {
+		 */
+			if(this.destination.getBranchName()=="HUB")
+			{
+				p.setStatus(Status.HUB_STORAGE);
+				p.addTracking(destination, p.getStatus());
+				//add to package to hub
+				this.getDestination().getListPackages().add(p);
+				
+				
+			}
+			else
+			{
+				p.setStatus(Status.DELIVERY);
+				p.addTracking(destination, p.getStatus());
+				//add package to local branch
+				this.getDestination().getListPackages().add(p);
+				
+			}	
+		//}
 	}
 	
 	
@@ -260,11 +324,8 @@ public class StandardTruck extends Truck implements Node{
 				return false;
 			return true;
 		}
+
 		
-		//Runnable interface
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			
-		}
+		
+	
 }

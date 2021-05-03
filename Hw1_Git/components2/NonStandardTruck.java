@@ -1,7 +1,10 @@
 package components2;
 
+import java.awt.Graphics;
+
 import components1.Node;
 import components1.Status;
+import components1.ThreadBand;
 
 
 /**
@@ -13,7 +16,7 @@ import components1.Status;
  */
 
 
-public class NonStandardTruck extends Truck implements Node {
+public class NonStandardTruck extends Truck implements Node, ThreadBand {
 	
 	private int width;
 	private int length;
@@ -27,6 +30,7 @@ public class NonStandardTruck extends Truck implements Node {
 		this.width=this.getRundomNumber(400, 800);
 		this.length=this.getRundomNumber(900, 1500);
 		System.out.println("Creating " + this);
+	
 	}
 	
 	public NonStandardTruck(String licensePlate, String truckModel, int length, int width, int height)
@@ -37,6 +41,7 @@ public class NonStandardTruck extends Truck implements Node {
 		this.width=width;
 		this.length=length;
 		System.out.println("Creating " + this);
+		
 	}
 	
 	
@@ -65,6 +70,58 @@ public class NonStandardTruck extends Truck implements Node {
 		this.height = height;
 	}
 
+	
+	public void run() {
+		// TODO Auto-generated method stub
+		while(true)
+		{
+			synchronized(this) {
+				while(!isRun)
+				{
+					try {
+						wait();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			work();
+		}
+		
+	}
+	
+
+	
+	@Override
+	 public void Sleep()
+	{
+
+		try {
+			Thread.sleep(500);
+		}catch(InterruptedException e) {}
+		
+	}
+	
+	@Override
+	public void StopMe() {
+		// TODO Auto-generated method stub
+		isRun = false;
+	}
+
+	@Override
+	public void ResumeMe() {
+		// TODO Auto-generated method stub
+		isRun = true;
+		notify();
+	}
+
+	@Override
+	public void DrawMe(Graphics g) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 	//Node methods ---------------------------------------------------------------------------------------
@@ -109,20 +166,23 @@ public class NonStandardTruck extends Truck implements Node {
 	}
 	
 	@Override
-	public void collectPackage(Package p) {
+	  public void collectPackage(Package p) {
 		/**
 		 * change package status and calculate time for van to collect it
 		 */
+		synchronized(p)
+		{
 		//package setup
 		p.setStatus(Status.DISTRIBUTION);
 		p.addTracking(this, p.getStatus());
-		
+		}
 		//set time
 		this.setTimeLeft(CalcTimeLeft(p) * 10);
 		
 		//print massage
 		System.out.println("NonStandardTruck " + Integer.toString(this.getTruckID()) + " delivering package " + Integer.toString(p.getPackageId())
 								+ " time to arrive: " + this.getTimeLeft());
+		
 	}
 
 
@@ -131,13 +191,17 @@ public class NonStandardTruck extends Truck implements Node {
 		/**
 		 * change package status remove from van
 		 */
+		synchronized(p)
+		{
 		//change pack status
 		p.setStatus(Status.DELIVERED);
 		p.addTracking(null, p.getStatus());
 		//clear van package list
 		this.getPackages().clear();
+		
 		//print masasge
 		System.out.println("NonStandardTruck " + Integer.toString(this.getTruckID()) + " has delivered package " + Integer.toString(p.getPackageId()));
+		}
 	}
 	
 	
@@ -185,13 +249,10 @@ public class NonStandardTruck extends Truck implements Node {
 				return false;
 			return true;
 		}
+
+	
 		
-		//Runnable interface
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			
-		}
+	
 
 		
 }

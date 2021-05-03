@@ -1,9 +1,11 @@
 package components2;
 
+import java.awt.Graphics;
 import java.util.ArrayList;
 
 import components1.Node;
 import components1.Status;
+import components1.ThreadBand;
 
 
 /**
@@ -17,11 +19,11 @@ import components1.Status;
  */
 
 
-public class Hub extends Thread implements Node {
+public class Hub extends Thread implements Node, ThreadBand {
 	
 	private ArrayList<Branch> branches;
 	private int branchIndex;
-	
+	boolean isRun = true;
 	
 	//constructor
 	public Hub()
@@ -50,9 +52,69 @@ public class Hub extends Thread implements Node {
 	//Runnable interface
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-		work();
+
+		// TODO Auto-generated method stub	
+		while(true)
+		{
+			synchronized(this)
+			{
+				while(!isRun)
+				{
+					try {
+						wait();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			
+			}
+		
+			work();
+		}
+		
 	}
+	
+	
+	@Override
+	public void Sleep()
+	{
+		for(Branch br: this.branches)
+		{
+			br.Sleep();
+		}
+		
+		
+		try {
+			Thread.sleep(500);
+		}catch(InterruptedException e) {}
+		
+	}
+
+	
+	
+	@Override
+	synchronized public void StopMe() {
+		// TODO Auto-generated method stub
+		isRun = false;
+	}
+
+	@Override
+	synchronized public void ResumeMe() {
+		// TODO Auto-generated method stub
+		isRun = true;
+		notify();
+	}
+
+	@Override
+	synchronized public void DrawMe(Graphics g) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	
+	
 	
 	@Override
 	public void work() 
@@ -81,8 +143,9 @@ public class Hub extends Thread implements Node {
 		for(Node nd : branches)
 		{
 			if(((Branch)nd).getBranchName() != "HUB")
-			{
+			{	
 				nd.work();
+				
 			}
 			else
 			{
@@ -105,20 +168,23 @@ public class Hub extends Thread implements Node {
 		 */
 		for(Truck tr: branches.get(0).getListTrucks())
 		{
+			synchronized(tr)
+			{
+				]if(tr.isAvaliable() && tr instanceof StandardTruck)
+				{
+					//Prepare truck for sending to local brunch
+					StandardTruck truck=((StandardTruck)tr);
+					sendTruck(truck);
+					//Load truck with packages
+					loadTruck(tr);
+				}
+				else if(tr.isAvaliable() && tr instanceof NonStandardTruck)
+				{
+					//Prepare truck for sending to customer 
+					sendNonSTruck(tr);
+				}
+			}
 			
-			if(tr.isAvaliable() && tr instanceof StandardTruck)
-			{
-				//Prepare truck for sending to local brunch
-				StandardTruck truck=((StandardTruck)tr);
-				sendTruck(truck);
-				//Load truck with packages
-				loadTruck(tr);
-			}
-			else if(tr.isAvaliable() && tr instanceof NonStandardTruck)
-			{
-				//Prepare truck for sending to customer 
-				sendNonSTruck(tr);
-			}
 		}
 	}
 	
@@ -201,7 +267,7 @@ public class Hub extends Thread implements Node {
 	
 	
 	
-	private void sendNonSTruck(Truck tr)
+	 private void sendNonSTruck(Truck tr)
 	{
 		/**
 		 * Check that NonStandardPackage fit NonStandardTruck and Send truck to Collect Package
@@ -217,6 +283,8 @@ public class Hub extends Thread implements Node {
 			{
 				NonStandardPackage pack = ((NonStandardPackage)temp.get(i));
 				
+				synchronized(pack)
+				{
 				//Check Package fit Truck
 				//if(truck.getHeight() >= pack.getHeight() && truck.getLength() >= pack.getLength() && truck.getWidth() >= pack.getWidth())
 				//{
@@ -235,6 +303,7 @@ public class Hub extends Thread implements Node {
 					
 					break;
 				//}
+				}
 				
 			}
 		}
@@ -243,24 +312,28 @@ public class Hub extends Thread implements Node {
 	
 	
 	@Override
-	public void collectPackage(Package p) {
+	 public void collectPackage(Package p) {
 		/**
 		 * Node interface function implementation
 		 * Manage package Status
 		 */
-		if(p instanceof NonStandardPackage) 
-		{
-			p.setStatus(Status.COLLECTION);
-		}
-		else 
-		{
-			p.setStatus(Status.BRANCH_TRANSPORT);
-		}
+		/*
+		 * synchronized(p) {
+		 */
+			if(p instanceof NonStandardPackage) 
+			{
+				p.setStatus(Status.COLLECTION);
+			}
+			else 
+			{
+				p.setStatus(Status.BRANCH_TRANSPORT);
+			}
+		//}
 	}
 
 	
 	@Override
-	public void deliverPackage(Package p) {
+	 public void deliverPackage(Package p) {
 		/**
 		 * Node interface function implementation
 		 */	
@@ -321,7 +394,8 @@ public class Hub extends Thread implements Node {
 				return false;
 			return true;
 		}
-		
+
+	
 	
 
 }

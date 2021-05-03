@@ -1,11 +1,12 @@
 package components2;
 
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Random;
 
 import components1.Address;
 import components1.Priority;
-
+import components1.ThreadBand;
 
 /**
  * ID 336249743
@@ -22,16 +23,18 @@ import components1.Priority;
  */
 
 
-public class MainOffice implements Runnable{
+public class MainOffice extends Thread implements ThreadBand{
 	static int clock;
 	Hub hub;
 	ArrayList<Package> packages;
-	boolean isRun = false;
+	boolean isRun = true;
 	int packagesNum;
-	
+	ArrayList<ThreadBand> threadBands;
+	ArrayList<Thread> gameThreads;
 	//constructor ------------------------------------------------------------------------------------
 	public MainOffice(int branches, int trucksForBranch, int packsNum)
 	{
+		super();
 		/**
 		 * Set clock to 0
 		 * ArrayList of packages to null
@@ -44,10 +47,13 @@ public class MainOffice implements Runnable{
 		clock = 0;
 		packages = new ArrayList<Package>();
 		packagesNum = packsNum;
+		threadBands = new ArrayList<>();
+		gameThreads = new ArrayList<>();
 		//HUB
 		hub = new Hub();
 		Branch brancheHub=hub.getBranches().get(0);
-		
+		threadBands.add(brancheHub);
+		gameThreads.add(brancheHub);
 		//create trucks for hub
 		for(int i=0;i<trucksForBranch;i++)
 		{
@@ -57,11 +63,15 @@ public class MainOffice implements Runnable{
 			
 			//Add StandartTruck to hub
 			brancheHub.getListTrucks().add(str);
-			
+			threadBands.add(str);
+			gameThreads.add(str);
 		}
 		
 		//Create and add NonStandartTruck to hub
-		brancheHub.getListTrucks().add(new NonStandardTruck());
+		NonStandardTruck nstr = new NonStandardTruck();
+		brancheHub.getListTrucks().add(nstr);
+		threadBands.add(nstr);
+		gameThreads.add(nstr);
 		System.out.println();
 		
 		
@@ -69,12 +79,18 @@ public class MainOffice implements Runnable{
 		for(int i=1;i<=branches;i++)
 		{
 			//add brunch
-			hub.getBranches().add(new Branch());
-			
+			Branch br = new Branch();
+			hub.getBranches().add(br);
+			threadBands.add(br);
+			gameThreads.add(br);
 			//add Vans for branch
 			for(int j=0;j<trucksForBranch;j++)
 			{
-				hub.getBranches().get(i).getListTrucks().add(new Van());
+				Van v = new Van();
+				hub.getBranches().get(i).getListTrucks().add(v);
+				threadBands.add(v);
+				gameThreads.add(v);
+				
 			}
 			System.out.println();
 		}
@@ -122,28 +138,45 @@ public class MainOffice implements Runnable{
 		 * each 5 seconds add new package to the system
 		 * by the end of play time loop print tracking report
 		 */
+		
+		
+		//List Add start
+		Start();
+		
 		System.out.println("========================== START ==========================");
-		while(isRun)
+		while(true)
 		{
-			if(this.packagesNum > 0 && clock % 5 == 0)
-			{
-				//Add new package to the system
-				addPackage();
-				//Update GUI
-			}
 			
-			//Move clock and apply work() in each Node implemented object
-			tick();
+			
+			synchronized(this)
+			{
+				while(!isRun)
+				{
+					try {
+						wait();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+				if(this.packagesNum > 0 && clock % 5 == 0)
+				{
+					//Add new package to the system
+					addPackage();
+					//Update GUI
+				}
+				
+				//Move clock and apply work() in each Node implemented object
+				tick();
+			
+			//repain
 			
 		}
 		
-		//print report
-		printReport();
 		
 	}
-
-	
-	
+		
 	
 	private void tick()
 	{
@@ -153,16 +186,60 @@ public class MainOffice implements Runnable{
 		//clock setup
 		System.out.println(clockString());
 		this.setClock(clock + 1);
-		//sleep
+		
+		//sleep All
+		//Sleep();
+		
 		try {
+			
 			Thread.sleep(500);
+			
 		}catch(InterruptedException e) {}
-		//apply work() in hub and than in all Node implemented objects
-		//hub.work();
+		
+		
 		
 	}
 	
+
+	public void Start()
+	{
+		for(Thread thd: gameThreads)
+		{
+			thd.start();
+		}
+	}
 	
+	
+	@Override
+	public void Sleep()
+	{
+		hub.Sleep();
+	}
+	
+	@Override
+	synchronized public void StopMe() {
+		// TODO Auto-generated method stub
+		//Array list stop
+		isRun = false;
+	}
+
+
+
+	@Override
+	synchronized public void ResumeMe() {
+		// TODO Auto-generated method stub
+		//Array list stop
+		isRun = true;
+		notify();
+	}
+
+
+
+	@Override
+	synchronized public void DrawMe(Graphics g) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	private void addPackage()
 	{	
@@ -261,11 +338,12 @@ public class MainOffice implements Runnable{
 	
 
 	
-	private void printReport()
+	public void printReport()
 	{
 		/**
 		 * Print tracking of all packages was created by the system
 		 */
+		
 		System.out.println("========================================!!!STOP!!!=========================================================");
 		for(Package p : packages)
 		{
@@ -343,6 +421,10 @@ public class MainOffice implements Runnable{
 				return false;
 			return true;
 		}
+
+
+
+
 
 
 	
