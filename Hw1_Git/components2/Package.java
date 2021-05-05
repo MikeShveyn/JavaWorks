@@ -20,7 +20,7 @@ import components1.*;
  */
 
 
-public abstract class Package {
+public abstract class Package implements Drawable{
 	private static int idCounter=1000;
 	private  int packageID; 
 	private Priority priority;
@@ -28,10 +28,10 @@ public abstract class Package {
 	private Address senderAdress;
 	private Address destinationAdress;
 	private ArrayList<Tracking> tracking;
-	
+	protected int x_cor;
 	
 	//constructor
-	public Package(Priority priority, Address senderAddress, Address destinationAddress)
+	public Package(Priority priority, Address senderAddress, Address destinationAddress, int xcor)
 	{
 		this.priority = priority;
 		this.senderAdress = senderAddress;
@@ -40,6 +40,7 @@ public abstract class Package {
 		this.tracking = new ArrayList<Tracking>();
 		this.packageID=idCounter;
 		idCounter++;
+		this.x_cor = xcor;
 	}
 
 	

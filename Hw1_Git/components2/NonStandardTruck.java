@@ -1,6 +1,8 @@
 package components2;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import components1.Node;
 import components1.Status;
@@ -16,12 +18,12 @@ import components1.ThreadBand;
  */
 
 
-public class NonStandardTruck extends Truck implements Node, ThreadBand {
+public class NonStandardTruck extends Truck implements Node {
 	
 	private int width;
 	private int length;
 	private int height;
-	
+
 	//constructor----------------------------------------------------------------------------------------------------------
 	public NonStandardTruck() 
 	{
@@ -87,6 +89,19 @@ public class NonStandardTruck extends Truck implements Node, ThreadBand {
 				}
 			}
 			
+			
+			if(getSleep)
+			{
+				try {
+					
+					Thread.sleep(500);
+					
+				}catch(InterruptedException e) {}
+				
+				getSleep = false;
+			}
+			
+			
 			work();
 		}
 		
@@ -97,12 +112,9 @@ public class NonStandardTruck extends Truck implements Node, ThreadBand {
 	@Override
 	 public void Sleep()
 	{
-
-		try {
-			Thread.sleep(500);
-		}catch(InterruptedException e) {}
-		
+		getSleep = true;
 	}
+	
 	
 	@Override
 	public void StopMe() {
@@ -120,6 +132,25 @@ public class NonStandardTruck extends Truck implements Node, ThreadBand {
 	@Override
 	public void DrawMe(Graphics g) {
 		// TODO Auto-generated method stub
+		//DRAW SELF
+		Graphics2D g2d = (Graphics2D) g;
+		if(this.getPackages().size() > 0)
+		{
+
+			if(this.getPackages().get(0).getStatus() == Status.COLLECTION)
+				g2d.setColor(Color.RED);
+			else if(this.getPackages().get(0).getStatus() == Status.DISTRIBUTION)
+				g2d.setColor(Color.ORANGE);
+			x_cor = 300;
+			y_cor = 300;
+			g2d.fillRect(x_cor, y_cor, 16,16);
+			g2d.setColor(Color.BLACK);
+			g2d.fillOval(x_cor + 8, y_cor + 4, 10, 10);
+			g2d.fillOval(x_cor + 8, y_cor - 4, 10, 10);
+			g2d.fillOval(x_cor - 8, y_cor + 4, 10, 10);
+			g2d.fillOval(x_cor - 8, y_cor - 4, 10, 10);
+		}
+		
 		
 	}
 	
@@ -134,11 +165,11 @@ public class NonStandardTruck extends Truck implements Node, ThreadBand {
 		if(this.isAvaliable()==false) 
 		{
 			//time left setup
-			int timeL=this.getTimeLeft();
+			double timeL=this.getTimeLeft();
 			this.setTimeLeft(timeL - 1);
 			
 			//time check
-			if(this.getTimeLeft() == 0)
+			if(this.getTimeLeft() <= 0)
 			{
 				//collect or deliver package
 				MainLogic();
@@ -152,56 +183,54 @@ public class NonStandardTruck extends Truck implements Node, ThreadBand {
 		/**
 		 *Depends on package status deliver or collect 
 		 */
-		
-		Package tempPackage  = this.getPackages().get(0);
-		if(tempPackage.getStatus() == Status.COLLECTION)
+		if(this.getPackages().size() > 0)
 		{
-			collectPackage(tempPackage);
+			Package tempPackage  = this.getPackages().get(0);
+			if(tempPackage.getStatus() == Status.COLLECTION)
+			{
+				collectPackage(tempPackage);
+			}
+			else if(tempPackage.getStatus() == Status.DISTRIBUTION)
+			{
+				deliverPackage(tempPackage);
+				this.setAvaliable(true);
+			}
 		}
-		else if(tempPackage.getStatus() == Status.DISTRIBUTION)
-		{
-			deliverPackage(tempPackage);
-			this.setAvaliable(true);
-		}
+	
 	}
 	
 	@Override
-	  public void collectPackage(Package p) {
+	 public void collectPackage(Package p) {
 		/**
 		 * change package status and calculate time for van to collect it
 		 */
-		synchronized(p)
-		{
 		//package setup
 		p.setStatus(Status.DISTRIBUTION);
 		p.addTracking(this, p.getStatus());
-		}
+		
 		//set time
 		this.setTimeLeft(CalcTimeLeft(p) * 10);
 		
 		//print massage
 		System.out.println("NonStandardTruck " + Integer.toString(this.getTruckID()) + " delivering package " + Integer.toString(p.getPackageId())
 								+ " time to arrive: " + this.getTimeLeft());
-		
 	}
 
 
 	@Override
-	public void deliverPackage(Package p) {
+	 public void deliverPackage(Package p) {
 		/**
 		 * change package status remove from van
 		 */
-		synchronized(p)
-		{
-		//change pack status
+		// change pack status
 		p.setStatus(Status.DELIVERED);
 		p.addTracking(null, p.getStatus());
-		//clear van package list
+		// clear van package list
 		this.getPackages().clear();
-		
-		//print masasge
-		System.out.println("NonStandardTruck " + Integer.toString(this.getTruckID()) + " has delivered package " + Integer.toString(p.getPackageId()));
-		}
+
+		// print masasge
+		System.out.println("NonStandardTruck " + Integer.toString(this.getTruckID()) + " has delivered package "
+				+ Integer.toString(p.getPackageId()));
 	}
 	
 	

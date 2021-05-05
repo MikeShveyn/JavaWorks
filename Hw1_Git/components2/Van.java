@@ -1,6 +1,8 @@
 package components2;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import components1.Node;
 import components1.Status;
@@ -17,8 +19,7 @@ import components1.ThreadBand;
  */
 
 
-public class Van extends Truck implements Node, ThreadBand{
-	
+public class Van extends Truck implements Node{
 	
 	//Constructors------------------------------------------------------------------
 	public Van() {
@@ -50,6 +51,20 @@ public class Van extends Truck implements Node, ThreadBand{
 				}
 			}
 			
+			
+			if(getSleep)
+			{
+				try {
+					
+					Thread.sleep(500);
+					
+				}catch(InterruptedException e) {}
+				
+				getSleep = false;
+			}
+			
+			
+			
 			work();
 		}
 		
@@ -58,12 +73,9 @@ public class Van extends Truck implements Node, ThreadBand{
 	
 
 	@Override
-	 public void Sleep()
-	{	
-		try {
-			Thread.sleep(500);
-		}catch(InterruptedException e) {}
-		
+	public void Sleep()
+	{
+		getSleep = true;
 	}
 
 	
@@ -83,7 +95,20 @@ public class Van extends Truck implements Node, ThreadBand{
 	@Override
 	synchronized public void DrawMe(Graphics g) {
 		// TODO Auto-generated method stub
-		
+		//DRAW SELF
+			Graphics2D g2d = (Graphics2D) g;
+			
+			if(this.getPackages().size() > 0)
+			{
+
+				g2d.setColor(Color.BLUE);
+				g2d.fillRect(x_cor, y_cor, 16,16);
+				g2d.setColor(Color.BLACK);
+				g2d.fillOval(x_cor + 8, y_cor + 4, 10, 10);
+				g2d.fillOval(x_cor + 8, y_cor - 4, 10, 10);
+				g2d.fillOval(x_cor - 8, y_cor + 4, 10, 10);
+				g2d.fillOval(x_cor - 8, y_cor - 4, 10, 10);
+			}	
 	}
 	
 	//Node methods----------------------------------------------------------------------------
@@ -97,10 +122,10 @@ public class Van extends Truck implements Node, ThreadBand{
 		if(this.isAvaliable()==false) 
 		{
 			//time left setup
-			int timeL=this.getTimeLeft();
+			double timeL=this.getTimeLeft();
 			this.setTimeLeft(timeL - 1);
 			
-			if(this.getTimeLeft() == 0)
+			if(this.getTimeLeft() <= 0)
 			{
 				MainLogic();
 			}
@@ -130,8 +155,9 @@ public class Van extends Truck implements Node, ThreadBand{
 		/**
 		 * change package status and clear truck 
 		 */
-		synchronized(p)
-		{
+		/*
+		 * synchronized(p) {
+		 */
 			//change package status
 			p.setStatus(Status.BRANCH_STORAGE);
 			p.addTracking(this, p.getStatus());
@@ -141,7 +167,7 @@ public class Van extends Truck implements Node, ThreadBand{
 									+ "and arrived back to branch" + Integer.toString(p.getSenderAdress().getZip()) );
 			//clear package 
 			this.getPackages().clear();
-		}
+		//}
 		
 			
 	}
@@ -153,8 +179,9 @@ public class Van extends Truck implements Node, ThreadBand{
 		/**
 		 * change package status and return truck to be available
 		 */
-		synchronized(p)
-		{
+		/*
+		 * synchronized(p) {
+		 */
 		//package status
 		p.setStatus(Status.DELIVERED);
 		p.addTracking(null, p.getStatus());
@@ -167,7 +194,7 @@ public class Van extends Truck implements Node, ThreadBand{
 		this.getPackages().clear();
 		//return truck to be available
 		this.setAvaliable(true);
-		}
+		//}
 	}
 
 

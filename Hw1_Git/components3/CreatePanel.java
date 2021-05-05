@@ -25,9 +25,11 @@ class createPanel extends JPanel implements ActionListener, ChangeListener{
 	private JButton OkButton,CancelButton;
 	JSlider branches,trucks,packs;
 	private int branhesNum,trucksNum,packsNum;
+	private myPanel p;
 	
-	createPanel()
+	createPanel(myPanel p)
 	{
+		this.p=p;
 		setBackground(Color.white);
 		JPanel p1 = new JPanel();
 		p1.setPreferredSize(new Dimension(560,360));
@@ -118,7 +120,7 @@ class createPanel extends JPanel implements ActionListener, ChangeListener{
 		String action = e.getActionCommand();
 		if(action.equals("Ok")) 
 		{
-				/////?????????????????????????????????
+			p.createMainOffice(branhesNum, trucksNum, packsNum);
 			JFrame t=(JFrame)SwingUtilities.getWindowAncestor(this);
 			t.dispose();
 		}

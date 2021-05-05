@@ -2,7 +2,9 @@ package components2;
 
 
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import components1.Node;
@@ -22,7 +24,7 @@ import components1.ThreadBand;
  */
 
 
-public class StandardTruck extends Truck implements Node, ThreadBand{
+public class StandardTruck extends Truck implements Node{
 	
 	private int maxWeight;
 	private Branch destination;
@@ -90,6 +92,17 @@ public class StandardTruck extends Truck implements Node, ThreadBand{
 					}
 				}
 			}
+			
+			if(getSleep)
+			{
+				try {
+					
+					Thread.sleep(500);
+					
+				}catch(InterruptedException e) {}
+				
+				getSleep = false;
+			}
 					
 			work();
 		}
@@ -101,10 +114,7 @@ public class StandardTruck extends Truck implements Node, ThreadBand{
 	@Override
 	 public void Sleep()
 	{
-		try {
-			Thread.sleep(500);
-		}catch(InterruptedException e) {}
-		
+		getSleep = true;
 	}
 	
 	@Override
@@ -123,12 +133,25 @@ public class StandardTruck extends Truck implements Node, ThreadBand{
 	@Override
 	synchronized public void DrawMe(Graphics g) {
 		// TODO Auto-generated method stub
-		
+		//DRAW SELF
+		Graphics2D g2d = (Graphics2D) g;
+		if(this.getPackages().size() == 0)
+			g2d.setColor(Color.GREEN);
+		else if(this.getPackages().size() > 0)
+			g2d.setColor(Color.CYAN);
+		x_cor = 200;
+		y_cor = 200;
+		g2d.fillRect(x_cor, y_cor, 16,16);
+		g2d.setColor(Color.BLACK);
+		g2d.fillOval(x_cor + 8, y_cor + 4, 10, 10);
+		g2d.fillOval(x_cor + 8, y_cor - 4, 10, 10);
+		g2d.fillOval(x_cor - 8, y_cor + 4, 10, 10);
+		g2d.fillOval(x_cor - 8, y_cor - 4, 10, 10);
 	}
 	
 	//Node methods---------------------------------------------------------------------------------------
 	@Override
-	synchronized public void work()
+	 public void work()
 	{
 		/**
 		 * Time and availability check 
@@ -138,11 +161,11 @@ public class StandardTruck extends Truck implements Node, ThreadBand{
 		if(this.isAvaliable()==false) 
 		{
 			//time left setup
-			int timeL=this.getTimeLeft();
+			double timeL=this.getTimeLeft();
 			this.setTimeLeft(timeL - 1);
 			
 			//if trip is ended
-			if(this.getTimeLeft() == 0)
+			if(this.getTimeLeft() <= 0)
 			{	
 				//UNload packages at current branch
 				UnLoadPackages();

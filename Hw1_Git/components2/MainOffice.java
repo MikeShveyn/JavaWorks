@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import components1.Address;
+import components1.Drawable;
 import components1.Priority;
 import components1.ThreadBand;
+import components3.myPanel;
 
 /**
  * ID 336249743
@@ -29,10 +31,15 @@ public class MainOffice extends Thread implements ThreadBand{
 	ArrayList<Package> packages;
 	boolean isRun = true;
 	int packagesNum;
+	
+	public ArrayList<Drawable> drawObjects;
 	ArrayList<ThreadBand> threadBands;
 	ArrayList<Thread> gameThreads;
+	myPanel localPanel;
+	
+	private int xPackCor = 0;
 	//constructor ------------------------------------------------------------------------------------
-	public MainOffice(int branches, int trucksForBranch, int packsNum)
+	public MainOffice(int branches, int trucksForBranch, int packsNum, myPanel lp)
 	{
 		super();
 		/**
@@ -43,17 +50,26 @@ public class MainOffice extends Thread implements ThreadBand{
 		 * Create Branches and trucks for each brunch
 		 * 
 		 */
-		
+		///calculate y between branches
+		int y_cor = 0;
+
+		this.localPanel = lp;
 		clock = 0;
 		packages = new ArrayList<Package>();
 		packagesNum = packsNum;
 		threadBands = new ArrayList<>();
 		gameThreads = new ArrayList<>();
+		drawObjects = new ArrayList<>();
 		//HUB
 		hub = new Hub();
 		Branch brancheHub=hub.getBranches().get(0);
+		
+		threadBands.add(hub);
+		gameThreads.add(hub);
+		drawObjects.add(hub);
 		threadBands.add(brancheHub);
 		gameThreads.add(brancheHub);
+		drawObjects.add(brancheHub);
 		//create trucks for hub
 		for(int i=0;i<trucksForBranch;i++)
 		{
@@ -65,6 +81,7 @@ public class MainOffice extends Thread implements ThreadBand{
 			brancheHub.getListTrucks().add(str);
 			threadBands.add(str);
 			gameThreads.add(str);
+			drawObjects.add(str);
 		}
 		
 		//Create and add NonStandartTruck to hub
@@ -72,17 +89,18 @@ public class MainOffice extends Thread implements ThreadBand{
 		brancheHub.getListTrucks().add(nstr);
 		threadBands.add(nstr);
 		gameThreads.add(nstr);
-		System.out.println();
-		
+		drawObjects.add(nstr);
 		
 		//Create branches and truck for each one
 		for(int i=1;i<=branches;i++)
 		{
 			//add brunch
-			Branch br = new Branch();
+			Branch br = new Branch(y_cor);
 			hub.getBranches().add(br);
 			threadBands.add(br);
 			gameThreads.add(br);
+			drawObjects.add(br);
+			y_cor += 50;
 			//add Vans for branch
 			for(int j=0;j<trucksForBranch;j++)
 			{
@@ -90,6 +108,7 @@ public class MainOffice extends Thread implements ThreadBand{
 				hub.getBranches().get(i).getListTrucks().add(v);
 				threadBands.add(v);
 				gameThreads.add(v);
+				drawObjects.add(v);
 				
 			}
 			System.out.println();
@@ -142,12 +161,10 @@ public class MainOffice extends Thread implements ThreadBand{
 		
 		//List Add start
 		Start();
-		
 		System.out.println("========================== START ==========================");
 		while(true)
 		{
-			
-			
+
 			synchronized(this)
 			{
 				while(!isRun)
@@ -164,13 +181,12 @@ public class MainOffice extends Thread implements ThreadBand{
 				{
 					//Add new package to the system
 					addPackage();
-					//Update GUI
+					this.localPanel.repaint();
 				}
 				
 				//Move clock and apply work() in each Node implemented object
 				tick();
 			
-			//repain
 			
 		}
 		
@@ -186,40 +202,43 @@ public class MainOffice extends Thread implements ThreadBand{
 		//clock setup
 		System.out.println(clockString());
 		this.setClock(clock + 1);
-		
+		localPanel.repaint();
 		//sleep All
-		//Sleep();
-		
+		Sleep();
 		try {
 			
 			Thread.sleep(500);
 			
 		}catch(InterruptedException e) {}
-		
+		//repaint
 		
 		
 	}
 	
 
-	public void Start()
+	synchronized public void Start()
 	{
 		for(Thread thd: gameThreads)
 		{
 			thd.start();
+		
 		}
 	}
 	
 	
 	@Override
-	public void Sleep()
+	 public void Sleep()
 	{
-		hub.Sleep();
+		for(ThreadBand trb: this.threadBands)
+			trb.Sleep();
 	}
 	
 	@Override
 	synchronized public void StopMe() {
 		// TODO Auto-generated method stub
 		//Array list stop
+		for(ThreadBand trb: this.threadBands)
+			trb.StopMe();
 		isRun = false;
 	}
 
@@ -228,20 +247,18 @@ public class MainOffice extends Thread implements ThreadBand{
 	@Override
 	synchronized public void ResumeMe() {
 		// TODO Auto-generated method stub
-		//Array list stop
+		
 		isRun = true;
 		notify();
-	}
-
-
-
-	@Override
-	synchronized public void DrawMe(Graphics g) {
-		// TODO Auto-generated method stub
 		
+		//Array list resume
+		for(ThreadBand trb: this.threadBands)
+			trb.ResumeMe();
 	}
+
+
 	
-	private void addPackage()
+	 private void addPackage()
 	{	
 		/**
 		 * Add Random package to the system
@@ -272,7 +289,7 @@ public class MainOffice extends Thread implements ThreadBand{
 				boolean acknol = getRundomBool();
 				
 				//pack setup
-				pack = new SmallPackage(pr, sender,reciver,acknol);
+				pack = new SmallPackage(pr, sender,reciver,acknol, this.xPackCor);
 				pack.addTracking(null, pack.getStatus());
 				
 				//add packs to closest brunch system
@@ -292,7 +309,7 @@ public class MainOffice extends Thread implements ThreadBand{
 				double weight = getRundomDouble(1,10);
 				
 				//pack setup
-				pack = new StandardPackage(pr, sender, reciver, weight);
+				pack = new StandardPackage(pr, sender, reciver, weight, this.xPackCor);
 				pack.addTracking(null, pack.getStatus());
 				
 				//add packs to closest brunch system
@@ -309,7 +326,7 @@ public class MainOffice extends Thread implements ThreadBand{
 				
 			case "NonStandardPackage":
 				//pack setup
-				pack = new NonStandardPackage(pr, sender, reciver, getRundomNumber(1, 500), getRundomNumber(1, 1000),getRundomNumber(1, 400));
+				pack = new NonStandardPackage(pr, sender, reciver, getRundomNumber(1, 500), getRundomNumber(1, 1000),getRundomNumber(1, 400), this.xPackCor);
 				pack.addTracking(null, pack.getStatus());
 				
 				//add package to Hub
@@ -328,7 +345,9 @@ public class MainOffice extends Thread implements ThreadBand{
 		//add to packages list
 		if(pack != null)
 		{
+			this.xPackCor += 50;
 			packages.add(pack);
+			drawObjects.add(pack);
 			this.packagesNum --;
 		}
 		else

@@ -1,7 +1,12 @@
 package components2;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+
 import components1.Address;
 import components1.Priority;
+import components1.Status;
 
 
 /**
@@ -17,8 +22,8 @@ public class SmallPackage extends Package {
 	private boolean acknowledge;
 	
 	//constructor
-	public SmallPackage(Priority priority, Address senderAddress, Address destinationAddress, boolean acknowledge) {
-		super(priority, senderAddress, destinationAddress);
+	public SmallPackage(Priority priority, Address senderAddress, Address destinationAddress, boolean acknowledge, int xcor) {
+		super(priority, senderAddress, destinationAddress, xcor);
 		this.acknowledge = acknowledge;
 	}
 
@@ -32,7 +37,39 @@ public class SmallPackage extends Package {
 		this.acknowledge = acknowledge;
 	}
 
-
+	
+	
+	@Override
+	synchronized public void DrawMe(Graphics g) {
+		
+		
+		//DRAW PACKAGES DEPEND ON STATUS
+		Graphics2D g2d = (Graphics2D) g;
+		if(this.getStatus() == Status.CREATION)
+		{
+			g2d.setColor(Color.RED);
+			g2d.fillOval(200 + x_cor, 10, 30,30);
+			g2d.setColor(Color.ORANGE);
+			g2d.fillOval(200 + x_cor, 540, 30,30);
+		}
+		
+		else if( this.getStatus() == Status.DELIVERED)
+		{
+			g2d.setColor(Color.ORANGE);
+			g2d.fillOval(200 + x_cor, 10, 30,30);
+			g2d.setColor(Color.RED);
+			g2d.fillOval(200 + x_cor, 540, 30,30);
+		}
+		else
+		{
+			g2d.setColor(Color.ORANGE);
+			g2d.fillOval(200 + x_cor, 10, 30,30);
+			g2d.fillOval(200 + x_cor, 540, 30,30);
+		}
+		
+		g2d.drawLine(x_cor, x_cor, x_cor, x_cor);
+	}
+	
 	//default methods ----------------------------------------------------------------------------------------------
 
 	@Override

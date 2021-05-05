@@ -2,6 +2,9 @@ package components2;
 
 import java.util.ArrayList;
 
+import components1.Drawable;
+import components1.ThreadBand;
+
 
 /**
  * ID 336249743
@@ -19,17 +22,19 @@ import java.util.ArrayList;
  */
 
 
-public abstract class Truck extends Thread {
+public abstract class Truck extends Thread implements ThreadBand, Drawable {
 	
 	private static int idCounter=2000;
 	private int truckID;
 	private String licensePlate;
 	private String truckModel;
 	private boolean avaliable;
-	private int timeLeft;
+	private double timeLeft;
 	private ArrayList<Package> packages;
-	boolean isRun = true;
-	
+	protected boolean isRun = true;
+	protected boolean getSleep = false;
+	public int x_cor = 100;
+	public int y_cor = 100;
 	//constructors------------------------------------------------------------------------------------
 	public Truck()
 	{	
@@ -116,13 +121,13 @@ public abstract class Truck extends Thread {
 
 
 
-	public int getTimeLeft() {
+	public double getTimeLeft() {
 		return timeLeft;
 	}
 
 
 
-	public void setTimeLeft(int timeLeft) {
+	public void setTimeLeft(double timeLeft) {
 		this.timeLeft = timeLeft;
 	}
 

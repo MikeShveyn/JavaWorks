@@ -2,8 +2,10 @@ package components2;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import components1.Drawable;
 import components1.Node;
 import components1.Status;
 import components1.ThreadBand;
@@ -22,18 +24,21 @@ import components1.ThreadBand;
  */
 
 
-public class Branch extends Thread implements Node, ThreadBand{
+public class Branch extends Thread implements Node, ThreadBand, Drawable{
 	private static int idCounter=-1;
 	private int branchId;
 	private String branchName;
 	private ArrayList<Truck> listTrucks;
 	private ArrayList<Package> listPackages;
 	boolean isRun = true;
+	boolean getSleep = false;
+	public int y_cor;
 	
 	//Constructor------------------------------------------------------------------------------------------------------------
-	public Branch()
+	public Branch(int ycr)
 	{	
 		super();
+		this.y_cor = ycr;
 		this.branchId = idCounter;
 		this.branchName="Branch " + Integer.toString(branchId);
 		listTrucks = new ArrayList<Truck>();
@@ -116,6 +121,18 @@ public class Branch extends Thread implements Node, ThreadBand{
 				}
 			}
 			
+			
+			if(getSleep)
+			{
+				try {
+					
+					Thread.sleep(500);
+					
+				}catch(InterruptedException e) {}
+				
+				getSleep = false;
+			}
+			
 		work();
 		
 		}
@@ -124,18 +141,7 @@ public class Branch extends Thread implements Node, ThreadBand{
 	@Override
 	public void Sleep()
 	{
-		for(Truck tr: this.listTrucks)
-		{
-			if(tr instanceof Van) {((Van)tr).Sleep();}
-			if(tr instanceof NonStandardTruck) {((NonStandardTruck)tr).Sleep();}
-			if(tr instanceof StandardTruck) {((StandardTruck)tr).Sleep();}
-		}
-		
-		
-		try {
-			Thread.sleep(500);
-		}catch(InterruptedException e) {}
-		
+		getSleep = true;
 	}
 	
 	
@@ -159,8 +165,17 @@ public class Branch extends Thread implements Node, ThreadBand{
 
 	@Override
 	synchronized public void DrawMe(Graphics g) {
-		// TODO Auto-generated method stub
+		//DRAW SELF
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setColor(Color.BLUE);
+		g2d.fillRect(100, 50 + y_cor, 40,30);
 		
+		//DRAW LINES TO PACKAGES SENDR AND RECIVER
+		for(int i = 0; i < this.listPackages.size(); i ++)
+		{
+			g2d.drawLine(140, 70 + y_cor ,205 + this.listPackages.get(i).x_cor , 15);
+			g2d.drawLine(140, 70 + y_cor ,205 + this.listPackages.get(i).x_cor , 555);
+		}
 	}
 
 	
@@ -175,7 +190,7 @@ public class Branch extends Thread implements Node, ThreadBand{
 		 */
 		
 		//Apply work to each van
-		ApplyWork();
+		//ApplyWork();
 		
 		//Go throw local packages decide collect or deliver
 		PackagesLogic();
@@ -220,7 +235,7 @@ public class Branch extends Thread implements Node, ThreadBand{
 	
 	
 	@Override
-	 public void collectPackage(Package p) {
+	public void collectPackage(Package p) {
 		/**
 		 *  Node method implementation
 		 *  Go throw Vans , find available van and send it to collect package
@@ -237,7 +252,6 @@ public class Branch extends Thread implements Node, ThreadBand{
 					//truck setup
 					tr.getPackages().add(p);
 					tr.setTimeLeft(((p.getSenderAdress().getStreet() % 10) + 1) * 10);
-					tr.setAvaliable(false);
 					
 					//package setup
 					p.setStatus(Status.COLLECTION);
@@ -245,8 +259,9 @@ public class Branch extends Thread implements Node, ThreadBand{
 					
 					//Print massage
 					System.out.println("Van " + Integer.toString(tr.getTruckID()) +  " is collecting package " + Integer.toString(p.getPackageId())
-					+ ", time to arrive: " + Integer.toString(tr.getTimeLeft()));
+					+ ", time to arrive: " + Double.toString(tr.getTimeLeft()));
 					
+					tr.setAvaliable(false);
 					break;
 				}
 			}
@@ -255,7 +270,7 @@ public class Branch extends Thread implements Node, ThreadBand{
 	}
 
 	@Override
-	 public void deliverPackage(Package p) {
+	public void deliverPackage(Package p) {
 		/**
 		 *  Node method implementation
 		 *  Go throw Vans , find available van and send it to deliver package
@@ -270,7 +285,7 @@ public class Branch extends Thread implements Node, ThreadBand{
 					//truck setup
 					tr.getPackages().add(p);
 					tr.setTimeLeft(((p.getDestinationAdress().getStreet() % 10) + 1) * 10);
-					tr.setAvaliable(false);
+					
 					
 					//package setup
 					p.setStatus(Status.DISTRIBUTION);
@@ -278,8 +293,8 @@ public class Branch extends Thread implements Node, ThreadBand{
 					
 					//print massage
 					System.out.println("Van " + Integer.toString(tr.getTruckID()) +  " is delivering package " + Integer.toString(p.getPackageId())
-					+ ", time to arrive: " + Integer.toString(tr.getTimeLeft()));
-					
+					+ ", time to arrive: " + Double.toString(tr.getTimeLeft()));
+					tr.setAvaliable(false);
 					break;
 				}
 			}

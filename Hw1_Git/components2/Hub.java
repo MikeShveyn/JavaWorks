@@ -1,8 +1,11 @@
 package components2;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import components1.Drawable;
 import components1.Node;
 import components1.Status;
 import components1.ThreadBand;
@@ -19,12 +22,12 @@ import components1.ThreadBand;
  */
 
 
-public class Hub extends Thread implements Node, ThreadBand {
+public class Hub extends Thread implements Node, ThreadBand, Drawable {
 	
 	private ArrayList<Branch> branches;
 	private int branchIndex;
 	boolean isRun = true;
-	
+	boolean getSleep = false;
 	//constructor
 	public Hub()
 	{	
@@ -70,25 +73,31 @@ public class Hub extends Thread implements Node, ThreadBand {
 			
 			}
 		
+			
+			
+			if(getSleep)
+			{
+				try {
+					
+					Thread.sleep(500);
+					
+				}catch(InterruptedException e) {}
+				
+				getSleep = false;
+			}
+			
+			
 			work();
+			
 		}
 		
 	}
 	
 	
 	@Override
-	public void Sleep()
+	 public void Sleep()
 	{
-		for(Branch br: this.branches)
-		{
-			br.Sleep();
-		}
-		
-		
-		try {
-			Thread.sleep(500);
-		}catch(InterruptedException e) {}
-		
+		getSleep = true;
 	}
 
 	
@@ -108,7 +117,29 @@ public class Hub extends Thread implements Node, ThreadBand {
 
 	@Override
 	synchronized public void DrawMe(Graphics g) {
+		
 		// TODO Auto-generated method stub
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setColor(Color.GREEN);
+		//g2d.drawRect(1100,150,40,200);
+		g2d.fillRect(1100,200,40,200);
+		
+		//DRAW LINES TO BRANCHES
+		for(int i = 1, j = 10; i < this.branches.size(); i ++, j += 10)
+		{
+			g2d.drawLine(1120, 220 + j, 100 , 60 + branches.get(i).y_cor);
+		}
+		
+		//DRAW LINE TO NON STANDART PACK
+		g2d.setColor(Color.RED);
+		for(int i = 0; i < this.branches.get(0).getListPackages().size(); i ++)
+		{
+			if(this.branches.get(0).getListPackages().get(i) instanceof NonStandardPackage)
+			{
+				g2d.drawLine(1120, 200 , this.branches.get(0).getListPackages().get(i).x_cor , 15);
+			}
+				
+		}
 		
 	}
 	
@@ -126,7 +157,7 @@ public class Hub extends Thread implements Node, ThreadBand {
 		 */
 		
 		//Apply work to all brunches and trucks
-		ApplyWork();
+		//ApplyWork();
 		
 		//Load and Send available trucks
 		LoadAndSend();
@@ -159,6 +190,7 @@ public class Hub extends Thread implements Node, ThreadBand {
 		}
 	}
 	
+	
 	private void LoadAndSend()
 	{
 		/**
@@ -168,22 +200,25 @@ public class Hub extends Thread implements Node, ThreadBand {
 		 */
 		for(Truck tr: branches.get(0).getListTrucks())
 		{
-			synchronized(tr)
-			{
-				]if(tr.isAvaliable() && tr instanceof StandardTruck)
+			/*
+			 * synchronized(tr) {
+			 */
+				if(tr.isAvaliable() && tr instanceof StandardTruck)
 				{
 					//Prepare truck for sending to local brunch
 					StandardTruck truck=((StandardTruck)tr);
 					sendTruck(truck);
 					//Load truck with packages
 					loadTruck(tr);
+					tr.setAvaliable(false);
+					
 				}
 				else if(tr.isAvaliable() && tr instanceof NonStandardTruck)
 				{
 					//Prepare truck for sending to customer 
 					sendNonSTruck(tr);
 				}
-			}
+			//}
 			
 		}
 	}
@@ -254,7 +289,7 @@ public class Hub extends Thread implements Node, ThreadBand {
 		this.branchIndex = this.GetNextIndex(branchIndex);
 		
 		//Setup truck
-		truck.setAvaliable(false);
+		//truck.setAvaliable(false);
 		truck.setTimeLeft(truck.getRundomNumber(1, 10) * 10);
 		
 		//Print Massages
@@ -267,7 +302,7 @@ public class Hub extends Thread implements Node, ThreadBand {
 	
 	
 	
-	 private void sendNonSTruck(Truck tr)
+	synchronized  private void sendNonSTruck(Truck tr)
 	{
 		/**
 		 * Check that NonStandardPackage fit NonStandardTruck and Send truck to Collect Package
@@ -283,8 +318,7 @@ public class Hub extends Thread implements Node, ThreadBand {
 			{
 				NonStandardPackage pack = ((NonStandardPackage)temp.get(i));
 				
-				synchronized(pack)
-				{
+				
 				//Check Package fit Truck
 				//if(truck.getHeight() >= pack.getHeight() && truck.getLength() >= pack.getLength() && truck.getWidth() >= pack.getWidth())
 				//{
@@ -293,7 +327,7 @@ public class Hub extends Thread implements Node, ThreadBand {
 					temp.get(i).addTracking(truck, temp.get(i).getStatus());
 					
 					//Setup truck time and print massage
-					truck.setAvaliable(false);
+					
 					truck.setTimeLeft(truck.getRundomNumber(1, 10) * 10);
 					System.out.println("NonStandartTruck"  + tr.getTruckID() + " is collecting package " + temp.get(i).getPackageId() + " time to arrive: " + tr.getTimeLeft() );
 					
@@ -301,9 +335,11 @@ public class Hub extends Thread implements Node, ThreadBand {
 					truck.getPackages().add(pack);
 					temp.remove(temp.get(i));
 					
+					truck.setAvaliable(false);
+					
 					break;
 				//}
-				}
+		
 				
 			}
 		}
