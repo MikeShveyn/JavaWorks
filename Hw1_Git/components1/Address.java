@@ -21,7 +21,9 @@ public class Address {
 		setStreet(street);
 	}
 
-	
+	public String getAddress() {
+		return Integer.toString(zip)+"-"+Integer.toString(street);
+	}
 	//getters setters
 	public int getZip() {
 		return zip;

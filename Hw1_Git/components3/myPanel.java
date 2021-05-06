@@ -6,12 +6,19 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 
 import components1.Drawable;
+import components1.Tracking;
 import components2.MainOffice;
 
 public class myPanel extends JPanel {
@@ -110,6 +117,18 @@ public class myPanel extends JPanel {
 	synchronized public void packInfo() {
 		MainOffice mainO =  ((MainOffice)game);
 		mainO.printReport();
+		JFrame f = new JFrame();
+		f.setTitle("Packages Info");
+		String[] columnNames = {"Package ID", "Sender", "Destination", "Priority", "Status"};
+		String[][] rowNames=mainO.rowNames();
+		
+		JTable j = new JTable(rowNames, columnNames);
+        j.setBounds(50, 70, 200, 300);
+        
+        JScrollPane sp = new JScrollPane(j);
+        f.add(sp);
+        f.setSize(1200,700);
+        f.setVisible(true);
 	}
 
 	synchronized public void branchInfo() {

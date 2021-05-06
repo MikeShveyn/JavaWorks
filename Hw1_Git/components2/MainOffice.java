@@ -8,6 +8,7 @@ import components1.Address;
 import components1.Drawable;
 import components1.Priority;
 import components1.ThreadBand;
+import components1.Tracking;
 import components3.myPanel;
 
 /**
@@ -339,6 +340,17 @@ public class MainOffice extends Thread implements ThreadBand{
 		
 	}
 	
+	public String[][] rowNames()
+	{
+		String[][] arr=new String[5][this.packages.size()];
+		int i=0;
+		for(Package p : packages) {
+			arr[i]=p.makeRow();
+			i++;
+			if(i== this.packages.size()) {break;}
+		}
+		return arr;
+	}
 
 	
 	public void printReport()

@@ -49,6 +49,17 @@ public abstract class Package implements Drawable{
 		return this.packageID;
 	}
 	
+	public String[] makeRow() 
+	{
+		String [] ar=new String [5];
+		ar[0]=Integer.toString(this.getPackageId());
+		ar[1]=this.getSenderAdress().getAddress();
+		ar[2]=this.getDestinationAdress().getAddress();
+		ar[3]=this.getPriority().toString();
+		ar[4]=this.getStatus().toString();
+		return ar;
+	}
+	
 	public Priority getPriority() {
 		return priority;
 	}
@@ -107,6 +118,8 @@ public abstract class Package implements Drawable{
 		 */
 		tracking.add(new Tracking(MainOffice.clock ,node, status));
 	}
+	
+	
 	
 	public void printTracking()
 	{
