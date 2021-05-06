@@ -81,41 +81,25 @@ public class StandardTruck extends Truck implements Node{
 		// TODO Auto-generated method stub
 		while(true)
 		{
-			synchronized(this) {
-				while(!isRun)
-				{
-					try {
+			try {
+				Thread.sleep(500);
+				synchronized(this) {
+					while(!isRun)
+					{
 						wait();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 				}
-			}
-			
-			if(getSleep)
-			{
-				try {
-					
-					Thread.sleep(500);
-					
-				}catch(InterruptedException e) {}
-				
-				getSleep = false;
-			}
-					
+			}catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();}
+
 			work();
+	
 		}
 	}
 	
 	
  
-	
-	@Override
-	 public void Sleep()
-	{
-		getSleep = true;
-	}
 	
 	@Override
 	synchronized public void StopMe() {
@@ -135,18 +119,29 @@ public class StandardTruck extends Truck implements Node{
 		// TODO Auto-generated method stub
 		//DRAW SELF
 		Graphics2D g2d = (Graphics2D) g;
-		if(this.getPackages().size() == 0)
-			g2d.setColor(Color.GREEN);
-		else if(this.getPackages().size() > 0)
-			g2d.setColor(Color.CYAN);
-		x_cor = 200;
-		y_cor = 200;
-		g2d.fillRect(x_cor, y_cor, 16,16);
-		g2d.setColor(Color.BLACK);
-		g2d.fillOval(x_cor + 8, y_cor + 4, 10, 10);
-		g2d.fillOval(x_cor + 8, y_cor - 4, 10, 10);
-		g2d.fillOval(x_cor - 8, y_cor + 4, 10, 10);
-		g2d.fillOval(x_cor - 8, y_cor - 4, 10, 10);
+		if(!this.isAvaliable())
+		{
+			if(this.getPackages().size() == 0)
+				g2d.setColor(Color.GREEN);
+			else if(this.getPackages().size() > 0)
+				g2d.setColor(Color.CYAN);
+			
+			g2d.fillRect(x_origin + x_cor,y_origin +  y_cor, 16,16);
+			g2d.setColor(Color.BLACK);
+			g2d.fillOval(x_origin + 8, y_origin +  + 4, 10, 10);
+			g2d.fillOval(x_origin + 8, y_origin + - 4, 10, 10);
+			g2d.fillOval(x_origin - 8, y_origin + + 4, 10, 10);
+			g2d.fillOval(x_origin - 8, y_origin + - 4, 10, 10);
+
+		}
+		
+	}
+	
+	
+	public void Move()
+	{
+		x_origin += x_cor;
+		y_origin += y_cor;		
 	}
 	
 	//Node methods---------------------------------------------------------------------------------------
@@ -163,7 +158,7 @@ public class StandardTruck extends Truck implements Node{
 			//time left setup
 			double timeL=this.getTimeLeft();
 			this.setTimeLeft(timeL - 1);
-			
+			Move();
 			//if trip is ended
 			if(this.getTimeLeft() <= 0)
 			{	
@@ -191,7 +186,7 @@ public class StandardTruck extends Truck implements Node{
 						
 						//print relevant message
 						System.out.println("StandardTruck " + this.getTruckID() + "  loaded packages at " + this.destination.getBranchName());
-						// change destination
+						// change destination	
 						this.setDestination(this.defaultHub);
 						
 						//Generate timeLeft 
@@ -199,6 +194,15 @@ public class StandardTruck extends Truck implements Node{
 						//print relevant message
 						System.out.println("StandardTruck" + Integer.toString(this.getTruckID()) + "  is on it's way to the HUB "+"time to arrive: "
 									+ this.getTimeLeft());
+						
+						//this.x_origin = 1100;
+						//this.y_origin = 300;
+						this.x_Dest = 1100;
+						this.y_Dest = 300;
+						
+						this.x_cor = (this.x_Dest - this.x_origin)/(int)(this.getTimeLeft());
+						this.y_cor = (this.y_Dest - this.y_origin)/(int)(this.getTimeLeft());
+						
 					}
 					
 				}
@@ -278,6 +282,7 @@ public class StandardTruck extends Truck implements Node{
 				p.addTracking(destination, p.getStatus());
 				//add package to local branch
 				this.getDestination().getListPackages().add(p);
+				//this.getDestination().localListPacks.add(p);
 				
 			}	
 		//}

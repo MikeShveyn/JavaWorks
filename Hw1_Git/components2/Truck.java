@@ -3,6 +3,7 @@ package components2;
 import java.util.ArrayList;
 
 import components1.Drawable;
+import components1.Dynamic;
 import components1.ThreadBand;
 
 
@@ -22,7 +23,7 @@ import components1.ThreadBand;
  */
 
 
-public abstract class Truck extends Thread implements ThreadBand, Drawable {
+public abstract class Truck extends Thread implements ThreadBand, Drawable, Dynamic {
 	
 	private static int idCounter=2000;
 	private int truckID;
@@ -33,8 +34,12 @@ public abstract class Truck extends Thread implements ThreadBand, Drawable {
 	private ArrayList<Package> packages;
 	protected boolean isRun = true;
 	protected boolean getSleep = false;
-	public int x_cor = 100;
-	public int y_cor = 100;
+	public int x_cor = 0;
+	public int y_cor = 0;
+	public int x_origin = 0;
+	public int y_origin = 0;
+	public int x_Dest = 0;
+	public int y_Dest = 0;
 	//constructors------------------------------------------------------------------------------------
 	public Truck()
 	{	
@@ -142,6 +147,8 @@ public abstract class Truck extends Thread implements ThreadBand, Drawable {
 	public void setPackages(ArrayList<Package> packages) {
 		this.packages = packages;
 	}
+	
+	
 	
 	
 	

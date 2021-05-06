@@ -67,9 +67,9 @@ public class MainOffice extends Thread implements ThreadBand{
 		threadBands.add(hub);
 		gameThreads.add(hub);
 		drawObjects.add(hub);
-		threadBands.add(brancheHub);
-		gameThreads.add(brancheHub);
-		drawObjects.add(brancheHub);
+		//threadBands.add(brancheHub);
+		//gameThreads.add(brancheHub);
+		//drawObjects.add(brancheHub);
 		//create trucks for hub
 		for(int i=0;i<trucksForBranch;i++)
 		{
@@ -157,40 +157,39 @@ public class MainOffice extends Thread implements ThreadBand{
 		 * each 5 seconds add new package to the system
 		 * by the end of play time loop print tracking report
 		 */
-		
-		
 		//List Add start
 		Start();
 		System.out.println("========================== START ==========================");
+
+		
 		while(true)
 		{
-
-			synchronized(this)
-			{
-				while(!isRun)
-				{
-					try {
+			try {
+				Thread.sleep(500);
+				
+				localPanel.repaint();
+				
+				synchronized(this) {
+					while(!isRun)
+					{
 						wait();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 				}
+			}catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();}
+
+			if(this.packagesNum > 0 && clock % 5 == 0)
+			{
+				//Add new package to the system
+				addPackage();
 			}
-				if(this.packagesNum > 0 && clock % 5 == 0)
-				{
-					//Add new package to the system
-					addPackage();
-					this.localPanel.repaint();
-				}
-				
-				//Move clock and apply work() in each Node implemented object
-				tick();
 			
-			
+			//Move clock and apply work() in each Node implemented object
+			tick();
 		}
 		
-		
+			
 	}
 		
 	
@@ -202,17 +201,7 @@ public class MainOffice extends Thread implements ThreadBand{
 		//clock setup
 		System.out.println(clockString());
 		this.setClock(clock + 1);
-		localPanel.repaint();
-		//sleep All
-		Sleep();
-		try {
-			
-			Thread.sleep(500);
-			
-		}catch(InterruptedException e) {}
-		//repaint
-		
-		
+
 	}
 	
 
@@ -225,13 +214,7 @@ public class MainOffice extends Thread implements ThreadBand{
 		}
 	}
 	
-	
-	@Override
-	 public void Sleep()
-	{
-		for(ThreadBand trb: this.threadBands)
-			trb.Sleep();
-	}
+
 	
 	@Override
 	synchronized public void StopMe() {
@@ -318,6 +301,7 @@ public class MainOffice extends Thread implements ThreadBand{
 					if(br.getBranchId() == sender.getZip())
 					{
 						br.getListPackages().add(pack);
+						//br.localListPacks.add(pack);
 					}
 				}
 				

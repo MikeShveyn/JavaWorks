@@ -39,44 +39,23 @@ public class Van extends Truck implements Node{
 		// TODO Auto-generated method stub
 		while(true)
 		{
-			synchronized(this) {
-				while(!isRun)
-				{
-					try {
+			try {
+				Thread.sleep(500);
+				synchronized(this) {
+					while(!isRun)
+					{
 						wait();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 				}
-			}
-			
-			
-			if(getSleep)
-			{
-				try {
-					
-					Thread.sleep(500);
-					
-				}catch(InterruptedException e) {}
-				
-				getSleep = false;
-			}
-			
-			
-			
+			}catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();}
+
 			work();
 		}
 		
 	}
 	
-	
-
-	@Override
-	public void Sleep()
-	{
-		getSleep = true;
-	}
 
 	
 	@Override
@@ -98,17 +77,24 @@ public class Van extends Truck implements Node{
 		//DRAW SELF
 			Graphics2D g2d = (Graphics2D) g;
 			
-			if(this.getPackages().size() > 0)
+			if(!this.isAvaliable() && this.getPackages().size() > 0)
 			{
 
 				g2d.setColor(Color.BLUE);
-				g2d.fillRect(x_cor, y_cor, 16,16);
+				g2d.fillRect(x_origin + x_cor,y_origin +  y_cor, 16,16);
 				g2d.setColor(Color.BLACK);
-				g2d.fillOval(x_cor + 8, y_cor + 4, 10, 10);
-				g2d.fillOval(x_cor + 8, y_cor - 4, 10, 10);
-				g2d.fillOval(x_cor - 8, y_cor + 4, 10, 10);
-				g2d.fillOval(x_cor - 8, y_cor - 4, 10, 10);
+				g2d.fillOval(x_origin + 8, y_origin +  + 4, 10, 10);
+				g2d.fillOval(x_origin + 8, y_origin + - 4, 10, 10);
+				g2d.fillOval(x_origin - 8, y_origin + + 4, 10, 10);
+				g2d.fillOval(x_origin - 8, y_origin + - 4, 10, 10);
 			}	
+	}
+	
+	
+	public void Move()
+	{
+		x_origin += x_cor;
+		y_origin += y_cor;
 	}
 	
 	//Node methods----------------------------------------------------------------------------
@@ -124,7 +110,7 @@ public class Van extends Truck implements Node{
 			//time left setup
 			double timeL=this.getTimeLeft();
 			this.setTimeLeft(timeL - 1);
-			
+			Move();
 			if(this.getTimeLeft() <= 0)
 			{
 				MainLogic();
@@ -138,15 +124,19 @@ public class Van extends Truck implements Node{
 		/**
 		 * depends on package status collect or deliver package
 		 */
-		Package tempPackage  = this.getPackages().get(0);
-		if(tempPackage.getStatus() == Status.COLLECTION)
+		if(this.getPackages().size() != 0)
 		{
-			collectPackage(tempPackage);
+			Package tempPackage  = this.getPackages().get(0);
+			if(tempPackage.getStatus() == Status.COLLECTION)
+			{
+				collectPackage(tempPackage);
+			}
+			else if(tempPackage.getStatus() == Status.DISTRIBUTION)
+			{
+				deliverPackage(tempPackage);
+			}
 		}
-		else if(tempPackage.getStatus() == Status.DISTRIBUTION)
-		{
-			deliverPackage(tempPackage);
-		}
+		
 	}
 	
 	

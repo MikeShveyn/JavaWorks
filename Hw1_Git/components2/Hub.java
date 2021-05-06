@@ -56,50 +56,25 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 	@Override
 	public void run() {
 
-		// TODO Auto-generated method stub	
 		while(true)
 		{
-			synchronized(this)
-			{
-				while(!isRun)
-				{
-					try {
+			try {
+				Thread.sleep(500);
+				synchronized(this) {
+					while(!isRun)
+					{
 						wait();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 				}
-			
-			}
-		
-			
-			
-			if(getSleep)
-			{
-				try {
-					
-					Thread.sleep(500);
-					
-				}catch(InterruptedException e) {}
-				
-				getSleep = false;
-			}
-			
-			
+			}catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();}
+
 			work();
-			
 		}
 		
 	}
 	
-	
-	@Override
-	 public void Sleep()
-	{
-		getSleep = true;
-	}
-
 	
 	
 	@Override
@@ -128,6 +103,7 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 		for(int i = 1, j = 10; i < this.branches.size(); i ++, j += 10)
 		{
 			g2d.drawLine(1120, 220 + j, 100 , 60 + branches.get(i).y_cor);
+			
 		}
 		
 		//DRAW LINE TO NON STANDART PACK
@@ -140,6 +116,8 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 			}
 				
 		}
+		
+		
 		
 	}
 	
@@ -210,6 +188,8 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 					sendTruck(truck);
 					//Load truck with packages
 					loadTruck(tr);
+					
+					
 					tr.setAvaliable(false);
 					
 				}
@@ -266,7 +246,7 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 						truck.getPackages().add(temp.get(i));
 						temp.remove(temp.get(i));
 					}
-
+					
 				}
 			
 			}
@@ -286,6 +266,9 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 		//Calculate random brunch
 		int temp=this.getRundomNumber(branchIndex, this.getBranches().size()-1);
 		truck.setDestination(this.getBranches().get(temp));
+		
+	
+		
 		this.branchIndex = this.GetNextIndex(branchIndex);
 		
 		//Setup truck
@@ -297,6 +280,14 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 		System.out.println("StandatdTruck "+ truck.getTruckID() +" is on it's way to "+
 				truck.getDestination().getBranchName()+ " time to arrive: " + truck.getTimeLeft());
 		
+		
+		truck.x_origin = 1100;
+		truck.y_origin = 300;
+		truck.x_Dest = 100;
+		truck.y_Dest = 50 + truck.getDestination().y_cor;
+		
+		truck.x_cor = (truck.x_Dest - truck.x_origin)/(int)(truck.getTimeLeft());
+		truck.y_cor = (truck.y_Dest - truck.y_origin)/(int)(truck.getTimeLeft());
 	}
 	
 	
@@ -334,6 +325,16 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 					//Add package to truck and remove from hub
 					truck.getPackages().add(pack);
 					temp.remove(temp.get(i));
+					
+					
+					truck.x_origin = 1100;
+					truck.y_origin = 300;
+					truck.x_Dest = 200 + pack.x_cor;
+					truck.y_Dest = 10;
+					
+					truck.x_cor = (truck.x_Dest - truck.x_origin)/(int)(truck.getTimeLeft());
+					truck.y_cor = (truck.y_Dest - truck.y_origin)/(int)(truck.getTimeLeft());
+					
 					
 					truck.setAvaliable(false);
 					

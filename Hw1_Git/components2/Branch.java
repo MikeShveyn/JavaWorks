@@ -33,16 +33,20 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 	boolean isRun = true;
 	boolean getSleep = false;
 	public int y_cor;
-	
+	private boolean hubSun;
+	//public ArrayList<Package> localListPacks;
 	//Constructor------------------------------------------------------------------------------------------------------------
 	public Branch(int ycr)
 	{	
 		super();
 		this.y_cor = ycr;
+		
+		this.hubSun = false;
 		this.branchId = idCounter;
 		this.branchName="Branch " + Integer.toString(branchId);
 		listTrucks = new ArrayList<Truck>();
 		listPackages = new ArrayList<Package>();
+		//localListPacks = new ArrayList<>();
 		idCounter++;
 		System.out.println("Creating Branch " + Integer.toString(branchId) + this);
 		
@@ -53,6 +57,7 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 	public Branch(String branchName)
 	{	
 		super();
+		this.hubSun = true;
 		this.branchId = idCounter;
 		this. branchName = branchName;
 		listTrucks = new ArrayList<Truck>();
@@ -108,46 +113,29 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 	
 		while(true)
 		{
-			synchronized(this)
-			{
-				while(!isRun)
-				{
-					try {
+			try {
+				Thread.sleep(500);
+				synchronized(this) {
+					while(!isRun)
+					{
 						wait();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 				}
-			}
+			}catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();}
 			
+			/*
+			 * if(!this.hubSun) {
+			 */
+				work();
+			//}
 			
-			if(getSleep)
-			{
-				try {
-					
-					Thread.sleep(500);
-					
-				}catch(InterruptedException e) {}
-				
-				getSleep = false;
-			}
-			
-		work();
-		
 		}
 	}
 	
-	@Override
-	public void Sleep()
-	{
-		getSleep = true;
-	}
-	
-	
-	
 
-	
+
 	@Override
 	synchronized public void StopMe() {
 		// TODO Auto-generated method stub
@@ -170,12 +158,15 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 		g2d.setColor(Color.BLUE);
 		g2d.fillRect(100, 50 + y_cor, 40,30);
 		
+	
 		//DRAW LINES TO PACKAGES SENDR AND RECIVER
 		for(int i = 0; i < this.listPackages.size(); i ++)
 		{
 			g2d.drawLine(140, 70 + y_cor ,205 + this.listPackages.get(i).x_cor , 15);
 			g2d.drawLine(140, 70 + y_cor ,205 + this.listPackages.get(i).x_cor , 555);
 		}
+		
+	
 	}
 
 	
@@ -261,6 +252,14 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 					System.out.println("Van " + Integer.toString(tr.getTruckID()) +  " is collecting package " + Integer.toString(p.getPackageId())
 					+ ", time to arrive: " + Double.toString(tr.getTimeLeft()));
 					
+					tr.x_origin = 100;
+					tr.y_origin = 50 + this.y_cor;
+					tr.x_Dest = 200 + p.x_cor;
+					tr.y_Dest = 10;
+					
+					tr.x_cor = (tr.x_Dest - tr.x_origin)/(int)(tr.getTimeLeft());
+					tr.y_cor = (tr.y_Dest - tr.y_origin)/(int)(tr.getTimeLeft());
+					
 					tr.setAvaliable(false);
 					break;
 				}
@@ -294,6 +293,12 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 					//print massage
 					System.out.println("Van " + Integer.toString(tr.getTruckID()) +  " is delivering package " + Integer.toString(p.getPackageId())
 					+ ", time to arrive: " + Double.toString(tr.getTimeLeft()));
+					
+					tr.x_origin = 100;
+					tr.y_origin = 50 + this.y_cor;
+					tr.x_Dest = 200 + p.x_cor;
+					tr.y_Dest = 540;
+					
 					tr.setAvaliable(false);
 					break;
 				}

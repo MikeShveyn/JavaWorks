@@ -77,43 +77,26 @@ public class NonStandardTruck extends Truck implements Node {
 		// TODO Auto-generated method stub
 		while(true)
 		{
-			synchronized(this) {
-				while(!isRun)
-				{
-					try {
+			try {
+				Thread.sleep(500);
+				synchronized(this) {
+					while(!isRun)
+					{
 						wait();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 				}
-			}
-			
-			
-			if(getSleep)
-			{
-				try {
-					
-					Thread.sleep(500);
-					
-				}catch(InterruptedException e) {}
-				
-				getSleep = false;
-			}
-			
-			
+			}catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();}
+
 			work();
+
 		}
 		
 	}
 	
 
 	
-	@Override
-	 public void Sleep()
-	{
-		getSleep = true;
-	}
 	
 	
 	@Override
@@ -123,7 +106,7 @@ public class NonStandardTruck extends Truck implements Node {
 	}
 
 	@Override
-	public void ResumeMe() {
+	synchronized public void ResumeMe() {
 		// TODO Auto-generated method stub
 		isRun = true;
 		notify();
@@ -134,27 +117,31 @@ public class NonStandardTruck extends Truck implements Node {
 		// TODO Auto-generated method stub
 		//DRAW SELF
 		Graphics2D g2d = (Graphics2D) g;
-		if(this.getPackages().size() > 0)
+		if(!this.isAvaliable() && this.getPackages().size() > 0)
 		{
 
 			if(this.getPackages().get(0).getStatus() == Status.COLLECTION)
 				g2d.setColor(Color.RED);
 			else if(this.getPackages().get(0).getStatus() == Status.DISTRIBUTION)
 				g2d.setColor(Color.ORANGE);
-			x_cor = 300;
-			y_cor = 300;
-			g2d.fillRect(x_cor, y_cor, 16,16);
+		
+			g2d.fillRect(x_origin + x_cor,y_origin +  y_cor, 16,16);
 			g2d.setColor(Color.BLACK);
-			g2d.fillOval(x_cor + 8, y_cor + 4, 10, 10);
-			g2d.fillOval(x_cor + 8, y_cor - 4, 10, 10);
-			g2d.fillOval(x_cor - 8, y_cor + 4, 10, 10);
-			g2d.fillOval(x_cor - 8, y_cor - 4, 10, 10);
+			g2d.fillOval(x_origin + 8, y_origin +  + 4, 10, 10);
+			g2d.fillOval(x_origin + 8, y_origin + - 4, 10, 10);
+			g2d.fillOval(x_origin - 8, y_origin + + 4, 10, 10);
+			g2d.fillOval(x_origin - 8, y_origin + - 4, 10, 10);
 		}
 		
 		
 	}
 	
-	
+	public void Move()
+	{
+		x_origin += x_cor;
+		y_origin += y_cor;		
+		
+	}
 	//Node methods ---------------------------------------------------------------------------------------
 	@Override
 	public void work() {
@@ -167,7 +154,7 @@ public class NonStandardTruck extends Truck implements Node {
 			//time left setup
 			double timeL=this.getTimeLeft();
 			this.setTimeLeft(timeL - 1);
-			
+			Move();
 			//time check
 			if(this.getTimeLeft() <= 0)
 			{
@@ -210,6 +197,14 @@ public class NonStandardTruck extends Truck implements Node {
 		
 		//set time
 		this.setTimeLeft(CalcTimeLeft(p) * 10);
+		
+		//this.x_origin = 1100;
+		//this.y_origin = 300;
+		this.x_Dest = 200 + p.x_cor;
+		this.y_Dest = 540;
+		
+		this.x_cor = (this.x_Dest - this.x_origin)/(int)(this.getTimeLeft());
+		this.y_cor = (this.y_Dest - this.y_origin)/(int)(this.getTimeLeft());
 		
 		//print massage
 		System.out.println("NonStandardTruck " + Integer.toString(this.getTruckID()) + " delivering package " + Integer.toString(p.getPackageId())
