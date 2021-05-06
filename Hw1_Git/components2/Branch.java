@@ -155,15 +155,15 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 	synchronized public void DrawMe(Graphics g) {
 		//DRAW SELF
 		Graphics2D g2d = (Graphics2D) g;
-		g2d.setColor(Color.BLUE);
-		g2d.fillRect(100, 50 + y_cor, 40,30);
+		g2d.setColor(new Color(133, 143, 237));
+		g2d.fillRect(50, 70 + y_cor, 40,30);
 		
 	
 		//DRAW LINES TO PACKAGES SENDR AND RECIVER
 		for(int i = 0; i < this.listPackages.size(); i ++)
 		{
-			g2d.drawLine(140, 70 + y_cor ,205 + this.listPackages.get(i).x_cor , 15);
-			g2d.drawLine(140, 70 + y_cor ,205 + this.listPackages.get(i).x_cor , 555);
+			g2d.drawLine(90, 85 + y_cor ,205 + this.listPackages.get(i).x_cor , 15);
+			g2d.drawLine(90, 85 + y_cor ,205 + this.listPackages.get(i).x_cor , 555);
 		}
 		
 	

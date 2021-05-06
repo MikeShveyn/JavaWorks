@@ -122,16 +122,16 @@ public class StandardTruck extends Truck implements Node{
 		if(!this.isAvaliable())
 		{
 			if(this.getPackages().size() == 0)
-				g2d.setColor(Color.GREEN);
+				g2d.setColor(new Color(219, 177, 59));
 			else if(this.getPackages().size() > 0)
-				g2d.setColor(Color.CYAN);
+				g2d.setColor(new Color(120, 99, 40));
 			
 			g2d.fillRect(x_origin + x_cor,y_origin +  y_cor, 16,16);
 			g2d.setColor(Color.BLACK);
-			g2d.fillOval(x_origin + 8, y_origin +  + 4, 10, 10);
-			g2d.fillOval(x_origin + 8, y_origin + - 4, 10, 10);
-			g2d.fillOval(x_origin - 8, y_origin + + 4, 10, 10);
-			g2d.fillOval(x_origin - 8, y_origin + - 4, 10, 10);
+			g2d.fillOval(x_origin + x_cor + 7, y_origin +  y_cor + 5, 10, 10);
+			g2d.fillOval(x_origin + x_cor + 7, y_origin +  y_cor - 5, 10, 10);
+			g2d.fillOval(x_origin + x_cor - 7, y_origin +  y_cor + 5, 10, 10);
+			g2d.fillOval(x_origin + x_cor - 7, y_origin +  y_cor - 5, 10, 10);
 
 		}
 		

@@ -121,16 +121,16 @@ public class NonStandardTruck extends Truck implements Node {
 		{
 
 			if(this.getPackages().get(0).getStatus() == Status.COLLECTION)
-				g2d.setColor(Color.RED);
+				g2d.setColor(new Color(255, 0, 0));
 			else if(this.getPackages().get(0).getStatus() == Status.DISTRIBUTION)
-				g2d.setColor(Color.ORANGE);
+				g2d.setColor(new Color(158, 17, 17));
 		
 			g2d.fillRect(x_origin + x_cor,y_origin +  y_cor, 16,16);
 			g2d.setColor(Color.BLACK);
-			g2d.fillOval(x_origin + 8, y_origin +  + 4, 10, 10);
-			g2d.fillOval(x_origin + 8, y_origin + - 4, 10, 10);
-			g2d.fillOval(x_origin - 8, y_origin + + 4, 10, 10);
-			g2d.fillOval(x_origin - 8, y_origin + - 4, 10, 10);
+			g2d.fillOval(x_origin + x_cor + 7, y_origin +  y_cor + 5, 10, 10);
+			g2d.fillOval(x_origin + x_cor + 7, y_origin +  y_cor - 5, 10, 10);
+			g2d.fillOval(x_origin + x_cor - 7, y_origin +  y_cor + 5, 10, 10);
+			g2d.fillOval(x_origin + x_cor - 7, y_origin +  y_cor - 5, 10, 10);
 		}
 		
 		

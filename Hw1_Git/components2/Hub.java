@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.List;
 
 import components1.Drawable;
 import components1.Node;
@@ -28,6 +31,7 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 	private int branchIndex;
 	boolean isRun = true;
 	boolean getSleep = false;
+	
 	//constructor
 	public Hub()
 	{	
@@ -69,7 +73,7 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 			}catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();}
-
+			
 			work();
 		}
 		
@@ -89,6 +93,7 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 		isRun = true;
 		notify();
 	}
+	
 
 	@Override
 	synchronized public void DrawMe(Graphics g) {
@@ -98,12 +103,12 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 		g2d.setColor(Color.GREEN);
 		//g2d.drawRect(1100,150,40,200);
 		g2d.fillRect(1100,200,40,200);
+		int dj = 180 / this.branches.size();
 		
 		//DRAW LINES TO BRANCHES
-		for(int i = 1, j = 10; i < this.branches.size(); i ++, j += 10)
+		for(int i = 1, j = 0 ; i < this.branches.size(); i ++, j += dj)
 		{
-			g2d.drawLine(1120, 220 + j, 100 , 60 + branches.get(i).y_cor);
-			
+			g2d.drawLine(1120, 210 + j, 50 , 85 + branches.get(i).y_cor);
 		}
 		
 		//DRAW LINE TO NON STANDART PACK
@@ -281,10 +286,10 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 				truck.getDestination().getBranchName()+ " time to arrive: " + truck.getTimeLeft());
 		
 		
-		truck.x_origin = 1100;
-		truck.y_origin = 300;
-		truck.x_Dest = 100;
-		truck.y_Dest = 50 + truck.getDestination().y_cor;
+		truck.x_origin = 1120;
+		truck.y_origin = 210;
+		truck.x_Dest = 50;
+		truck.y_Dest = 85 + truck.getDestination().y_cor;
 		
 		truck.x_cor = (truck.x_Dest - truck.x_origin)/(int)(truck.getTimeLeft());
 		truck.y_cor = (truck.y_Dest - truck.y_origin)/(int)(truck.getTimeLeft());

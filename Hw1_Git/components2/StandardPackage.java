@@ -47,22 +47,22 @@ public class StandardPackage extends Package {
 		Graphics2D g2d = (Graphics2D) g;
 		if(this.getStatus() == Status.CREATION)
 		{
-			g2d.setColor(Color.RED);
+			g2d.setColor(new Color(158, 17, 17));
 			g2d.fillOval(200 + x_cor, 10, 30,30);
-			g2d.setColor(Color.ORANGE);
+			g2d.setColor(new Color(255,0,0));
 			g2d.fillOval(200 + x_cor, 540, 30,30);
 		}
 		
 		else if( this.getStatus() == Status.DELIVERED)
 		{
-			g2d.setColor(Color.ORANGE);
+			g2d.setColor(new Color(255,0,0));
 			g2d.fillOval(200 + x_cor, 10, 30,30);
-			g2d.setColor(Color.RED);
+			g2d.setColor(new Color(158, 17, 17));
 			g2d.fillOval(200 + x_cor, 540, 30,30);
 		}
 		else
 		{
-			g2d.setColor(Color.ORANGE);
+			g2d.setColor(new Color(255,0,0));
 			g2d.fillOval(200 + x_cor, 10, 30,30);
 			g2d.fillOval(200 + x_cor, 540, 30,30);
 		}

@@ -40,6 +40,7 @@ public abstract class Truck extends Thread implements ThreadBand, Drawable, Dyna
 	public int y_origin = 0;
 	public int x_Dest = 0;
 	public int y_Dest = 0;
+	
 	//constructors------------------------------------------------------------------------------------
 	public Truck()
 	{	

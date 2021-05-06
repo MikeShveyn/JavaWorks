@@ -161,7 +161,7 @@ public class MainOffice extends Thread implements ThreadBand{
 		//List Add start
 		Start();
 		System.out.println("========================== START ==========================");
-
+		localPanel.repaint();
 		
 		while(true)
 		{
