@@ -33,15 +33,13 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 	boolean isRun = true;
 	boolean getSleep = false;
 	public int y_cor;
-	private boolean hubSun;
 	//public ArrayList<Package> localListPacks;
 	//Constructor------------------------------------------------------------------------------------------------------------
 	public Branch(int ycr)
 	{	
 		super();
 		this.y_cor = ycr;
-		
-		this.hubSun = false;
+
 		this.branchId = idCounter;
 		this.branchName="Branch " + Integer.toString(branchId);
 		listTrucks = new ArrayList<Truck>();
@@ -57,7 +55,6 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 	public Branch(String branchName)
 	{	
 		super();
-		this.hubSun = true;
 		this.branchId = idCounter;
 		this. branchName = branchName;
 		listTrucks = new ArrayList<Truck>();
@@ -124,12 +121,8 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 			}catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();}
-			
-			/*
-			 * if(!this.hubSun) {
-			 */
+
 				work();
-			//}
 			
 		}
 	}
@@ -162,8 +155,8 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 		//DRAW LINES TO PACKAGES SENDR AND RECIVER
 		for(int i = 0; i < this.listPackages.size(); i ++)
 		{
-			g2d.drawLine(90, 85 + y_cor ,205 + this.listPackages.get(i).x_cor , 15);
-			g2d.drawLine(90, 85 + y_cor ,205 + this.listPackages.get(i).x_cor , 555);
+			g2d.drawLine(90, 85 + y_cor ,215 + this.listPackages.get(i).x_cor , 25);
+			g2d.drawLine(90, 85 + y_cor ,215 + this.listPackages.get(i).x_cor , 555);
 		}
 		
 	
@@ -252,10 +245,10 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 					System.out.println("Van " + Integer.toString(tr.getTruckID()) +  " is collecting package " + Integer.toString(p.getPackageId())
 					+ ", time to arrive: " + Double.toString(tr.getTimeLeft()));
 					
-					tr.x_origin = 100;
-					tr.y_origin = 50 + this.y_cor;
+					tr.x_origin = 80;
+					tr.y_origin = 82 + this.y_cor;
 					tr.x_Dest = 200 + p.x_cor;
-					tr.y_Dest = 10;
+					tr.y_Dest = 25;
 					
 					tr.x_cor = (tr.x_Dest - tr.x_origin)/(int)(tr.getTimeLeft());
 					tr.y_cor = (tr.y_Dest - tr.y_origin)/(int)(tr.getTimeLeft());
@@ -294,10 +287,14 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 					System.out.println("Van " + Integer.toString(tr.getTruckID()) +  " is delivering package " + Integer.toString(p.getPackageId())
 					+ ", time to arrive: " + Double.toString(tr.getTimeLeft()));
 					
-					tr.x_origin = 100;
-					tr.y_origin = 50 + this.y_cor;
+					tr.x_origin = 80;
+					tr.y_origin = 82 + this.y_cor;
 					tr.x_Dest = 200 + p.x_cor;
-					tr.y_Dest = 540;
+					tr.y_Dest = 555;
+					
+					tr.x_cor = (tr.x_Dest - tr.x_origin)/(int)(tr.getTimeLeft());
+					tr.y_cor = (tr.y_Dest - tr.y_origin)/(int)(tr.getTimeLeft());
+					
 					
 					tr.setAvaliable(false);
 					break;

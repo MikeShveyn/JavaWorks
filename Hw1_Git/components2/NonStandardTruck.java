@@ -189,7 +189,7 @@ public class NonStandardTruck extends Truck implements Node {
 	@Override
 	 public void collectPackage(Package p) {
 		/**
-		 * change package status and calculate time for van to collect it
+		 * change package status and calculate time  to collect it
 		 */
 		//package setup
 		p.setStatus(Status.DISTRIBUTION);
@@ -198,10 +198,10 @@ public class NonStandardTruck extends Truck implements Node {
 		//set time
 		this.setTimeLeft(CalcTimeLeft(p) * 10);
 		
-		//this.x_origin = 1100;
-		//this.y_origin = 300;
+		this.x_origin = 200 + p.x_cor;
+		this.y_origin = 25;
 		this.x_Dest = 200 + p.x_cor;
-		this.y_Dest = 540;
+		this.y_Dest = 555;
 		
 		this.x_cor = (this.x_Dest - this.x_origin)/(int)(this.getTimeLeft());
 		this.y_cor = (this.y_Dest - this.y_origin)/(int)(this.getTimeLeft());

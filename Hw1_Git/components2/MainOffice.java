@@ -1,6 +1,6 @@
 package components2;
 
-import java.awt.Graphics;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -8,7 +8,7 @@ import components1.Address;
 import components1.Drawable;
 import components1.Priority;
 import components1.ThreadBand;
-import components1.Tracking;
+
 import components3.myPanel;
 
 /**
@@ -39,6 +39,7 @@ public class MainOffice extends Thread implements ThreadBand{
 	myPanel localPanel;
 	
 	private int xPackCor = 0;
+	private int dxPackCor = 0;
 	//constructor ------------------------------------------------------------------------------------
 	public MainOffice(int branches, int trucksForBranch, int packsNum, myPanel lp)
 	{
@@ -51,8 +52,7 @@ public class MainOffice extends Thread implements ThreadBand{
 		 * Create Branches and trucks for each brunch
 		 * 
 		 */
-		///calculate y between branches
-		int y_cor = 0;
+	
 
 		this.localPanel = lp;
 		clock = 0;
@@ -92,16 +92,23 @@ public class MainOffice extends Thread implements ThreadBand{
 		gameThreads.add(nstr);
 		drawObjects.add(nstr);
 		
+		///calculate y between branches
+		int dy_cor = 470/branches;
+		int y_cor = 0;
+		//calculate packages dx
+		this.dxPackCor = 800/this.packagesNum;
+		
 		//Create branches and truck for each one
 		for(int i=1;i<=branches;i++)
 		{
+			
 			//add brunch
 			Branch br = new Branch(y_cor);
 			hub.getBranches().add(br);
 			threadBands.add(br);
 			gameThreads.add(br);
 			drawObjects.add(br);
-			y_cor += 50;
+			y_cor += dy_cor;
 			//add Vans for branch
 			for(int j=0;j<trucksForBranch;j++)
 			{
@@ -302,7 +309,7 @@ public class MainOffice extends Thread implements ThreadBand{
 					if(br.getBranchId() == sender.getZip())
 					{
 						br.getListPackages().add(pack);
-						//br.localListPacks.add(pack);
+					
 					}
 				}
 				
@@ -330,7 +337,7 @@ public class MainOffice extends Thread implements ThreadBand{
 		//add to packages list
 		if(pack != null)
 		{
-			this.xPackCor += 50;
+			this.xPackCor += this.dxPackCor;
 			packages.add(pack);
 			drawObjects.add(pack);
 			this.packagesNum --;

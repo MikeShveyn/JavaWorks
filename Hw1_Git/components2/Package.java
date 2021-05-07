@@ -1,5 +1,8 @@
 package components2;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import components1.*;
@@ -110,6 +113,43 @@ public abstract class Package implements Drawable{
 
 	
 	//methods------------------------------------------------------------------------------------------------
+	@Override
+	 synchronized public void DrawMe(Graphics g) {
+		
+		
+		//DRAW PACKAGES DEPEND ON STATUS
+		Graphics2D g2d = (Graphics2D) g;
+		if(this.getStatus() == Status.CREATION)
+		{
+			g2d.setColor(new Color(158, 17, 17));
+			g2d.fillOval(200 + x_cor, 10, 30,30);
+			g2d.setColor(new Color(255,0,0));
+			g2d.fillOval(200 + x_cor, 540, 30,30);
+		}
+		
+		else if( this.getStatus() == Status.DELIVERED)
+		{
+			g2d.setColor(new Color(255,0,0));
+			g2d.fillOval(200 + x_cor, 10, 30,30);
+			g2d.setColor(new Color(158, 17, 17));
+			g2d.fillOval(200 + x_cor, 540, 30,30);
+		}
+		else
+		{
+			g2d.setColor(new Color(255,0,0));
+			g2d.fillOval(200 + x_cor, 10, 30,30);
+			g2d.fillOval(200 + x_cor, 540, 30,30);
+		}
+		
+		
+		if(this instanceof NonStandardPackage)
+		{
+			//DRAW LINE FROM SENDER TO RECIVER
+			g2d.setColor(Color.RED);
+			g2d.drawLine(215 + x_cor , 40 ,215 + x_cor , 540);
+		}
+		
+	}
 	
 	public void addTracking(Node node, Status status)
 	{

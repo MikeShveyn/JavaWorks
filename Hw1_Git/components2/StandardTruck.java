@@ -29,7 +29,8 @@ public class StandardTruck extends Truck implements Node{
 	private int maxWeight;
 	private Branch destination;
 	private Branch defaultHub;
-	
+	public int x_start = 0;
+	public int y_start = 0;
 	
 	//constructor--------------------------------------------------------------------------
 	public StandardTruck ()
@@ -197,8 +198,8 @@ public class StandardTruck extends Truck implements Node{
 						
 						//this.x_origin = 1100;
 						//this.y_origin = 300;
-						this.x_Dest = 1100;
-						this.y_Dest = 300;
+						this.x_Dest = this.x_start;
+						this.y_Dest = this.y_start;
 						
 						this.x_cor = (this.x_Dest - this.x_origin)/(int)(this.getTimeLeft());
 						this.y_cor = (this.y_Dest - this.y_origin)/(int)(this.getTimeLeft());

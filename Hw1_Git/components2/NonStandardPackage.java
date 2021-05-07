@@ -1,13 +1,9 @@
 package components2;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+
 
 import components1.Address;
 import components1.Priority;
-import components1.Status;
-
 
 /**
  * ID 336249743
@@ -63,38 +59,6 @@ public class NonStandardPackage extends Package{
 	}
 
 
-	synchronized public void DrawMe(Graphics g) {
-		
-		
-		//DRAW PACKAGES DEPEND ON STATUS
-		Graphics2D g2d = (Graphics2D) g;
-		if(this.getStatus() == Status.CREATION)
-		{
-			g2d.setColor(new Color(158, 17, 17));
-			g2d.fillOval(200 + x_cor, 10, 30,30);
-			g2d.setColor(new Color(255,0,0));
-			g2d.fillOval(200 + x_cor, 540, 30,30);
-		}
-		
-		else if( this.getStatus() == Status.DELIVERED)
-		{
-			g2d.setColor(new Color(255,0,0));
-			g2d.fillOval(200 + x_cor, 10, 30,30);
-			g2d.setColor(new Color(158, 17, 17));
-			g2d.fillOval(200 + x_cor, 540, 30,30);
-		}
-		else
-		{
-			g2d.setColor(new Color(255,0,0));
-			g2d.fillOval(200 + x_cor, 10, 30,30);
-			g2d.fillOval(200 + x_cor, 540, 30,30);
-		}
-		
-		//DRAW LINE FROM SENDER TO RECIVER
-		g2d.setColor(Color.RED);
-		g2d.drawLine(210 + x_cor , 40 ,210 + x_cor , 540);
-		
-	}
 	//methods
 
 	@Override

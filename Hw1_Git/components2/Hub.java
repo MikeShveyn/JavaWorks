@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
 
 import components1.Drawable;
@@ -31,11 +29,12 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 	private int branchIndex;
 	boolean isRun = true;
 	boolean getSleep = false;
-	
+	private List<Integer> y_LineCr;
 	//constructor
 	public Hub()
 	{	
 		super();
+		this.y_LineCr = new ArrayList<>();
 		branches = new ArrayList<Branch>();
 		branches.add(new Branch("HUB"));
 		//hub is brunch in index 0 so we start count local brunches from 1 index
@@ -59,7 +58,9 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 	//Runnable interface
 	@Override
 	public void run() {
-
+		
+		CalculateLines();
+		
 		while(true)
 		{
 			try {
@@ -100,15 +101,15 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 		
 		// TODO Auto-generated method stub
 		Graphics2D g2d = (Graphics2D) g;
-		g2d.setColor(Color.GREEN);
+		g2d.setColor(new Color(20, 156, 31));
 		//g2d.drawRect(1100,150,40,200);
 		g2d.fillRect(1100,200,40,200);
-		int dj = 180 / this.branches.size();
+		int dj = 180 / (this.branches.size() - 1);
 		
 		//DRAW LINES TO BRANCHES
 		for(int i = 1, j = 0 ; i < this.branches.size(); i ++, j += dj)
 		{
-			g2d.drawLine(1120, 210 + j, 50 , 85 + branches.get(i).y_cor);
+			g2d.drawLine(1120, 220 + j, 50 , 80 + branches.get(i).y_cor);
 		}
 		
 		//DRAW LINE TO NON STANDART PACK
@@ -117,18 +118,23 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 		{
 			if(this.branches.get(0).getListPackages().get(i) instanceof NonStandardPackage)
 			{
-				g2d.drawLine(1120, 200 , this.branches.get(0).getListPackages().get(i).x_cor , 15);
+				g2d.drawLine(1120, 200 , 200 + this.branches.get(0).getListPackages().get(i).x_cor , 25);
 			}
 				
 		}
 		
-		
-		
 	}
 	
 	
-	
-	
+	public void CalculateLines()
+	{
+		int dj = 180 / (this.branches.size() - 1);
+		
+		for(int i = 1, j = 0 ; i < this.branches.size(); i++, j += dj)
+		{
+			this.y_LineCr.add(215+j); 
+		}
+	}
 	
 	@Override
 	public void work() 
@@ -172,6 +178,7 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 			
 		}
 	}
+	
 	
 	
 	private void LoadAndSend()
@@ -287,7 +294,11 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 		
 		
 		truck.x_origin = 1120;
-		truck.y_origin = 210;
+		truck.y_origin = y_LineCr.get(truck.getDestination().getBranchId());
+		
+		truck.x_start = 1120;
+		truck.y_start = y_LineCr.get(truck.getDestination().getBranchId());
+		
 		truck.x_Dest = 50;
 		truck.y_Dest = 85 + truck.getDestination().y_cor;
 		
@@ -332,10 +343,10 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 					temp.remove(temp.get(i));
 					
 					
-					truck.x_origin = 1100;
-					truck.y_origin = 300;
+					truck.x_origin = 1120;
+					truck.y_origin = 200;
 					truck.x_Dest = 200 + pack.x_cor;
-					truck.y_Dest = 10;
+					truck.y_Dest = 25;
 					
 					truck.x_cor = (truck.x_Dest - truck.x_origin)/(int)(truck.getTimeLeft());
 					truck.y_cor = (truck.y_Dest - truck.y_origin)/(int)(truck.getTimeLeft());

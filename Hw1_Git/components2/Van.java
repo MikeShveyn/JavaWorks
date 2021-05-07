@@ -87,6 +87,7 @@ public class Van extends Truck implements Node{
 				g2d.fillOval(x_origin + x_cor + 7, y_origin +  y_cor - 5, 10, 10);
 				g2d.fillOval(x_origin + x_cor - 7, y_origin +  y_cor + 5, 10, 10);
 				g2d.fillOval(x_origin + x_cor - 7, y_origin +  y_cor - 5, 10, 10);
+				
 			}	
 	}
 	
