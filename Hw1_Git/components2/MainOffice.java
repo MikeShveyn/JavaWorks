@@ -348,15 +348,18 @@ public class MainOffice extends Thread implements ThreadBand{
 	}
 	
 	public String[][] rowNames()
-	{
-		String[][] arr=new String[5][this.packages.size()];
-		int i=0;
-		for(Package p : packages) {
-			arr[i]=p.makeRow();
-			i++;
-			if(i== this.packages.size()) {break;}
-		}
-		return arr;
+	{	
+		if(this.packages.size()!=0) {
+			String[][] arr=new String[this.packages.size()][5];
+			int i=0;
+			for(Package p : packages) {
+				arr[i]=p.makeRow();
+				i++;
+				if(i== this.packages.size()) {break;}
+			}
+			return arr;
+	}
+	return null;
 	}
 
 	

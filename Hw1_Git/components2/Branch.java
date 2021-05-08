@@ -352,7 +352,19 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 		}
 
 
-		
+		public String[][] makePInfo()
+		{
+			String[][] arr=new String[this.listPackages.size()][5];
+			if(this.listPackages.size()==0){return null;}
+			int i=0;
+			for(Package p : this.listPackages)
+			{
+				arr[i]=p.makeRow();
+				i++;
+				if(i== this.listPackages.size()) {break;}
+			}
+			return arr;
+		}
 	
 	
 	
