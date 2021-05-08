@@ -18,7 +18,10 @@ import components2.MainOffice;
 
 class createPanel extends JPanel implements ActionListener, ChangeListener{
 	/**
+	 * ID 336249743
+	 * ID 336249628
 	 * 
+	 * Represent USER INPUT GUI
 	 */
 	private static final long serialVersionUID = 1L;
 	private String[] options= {"Number of Branches","Number of trucks per brunch","Number of packages"};
@@ -117,6 +120,11 @@ class createPanel extends JPanel implements ActionListener, ChangeListener{
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		/**
+		 * Set two main actions OK Button send information to mainPanel 
+		 * and then mainPanel create MainOffice 
+		 * CANCEL action close createPanel
+		 */
 		String action = e.getActionCommand();
 		if(action.equals("Ok")) 
 		{
@@ -133,6 +141,9 @@ class createPanel extends JPanel implements ActionListener, ChangeListener{
 	
 	@Override
 	public void stateChanged(ChangeEvent event) {
+		/**
+		 * Change variables by moving sliders
+		 */
 		JSlider source = (JSlider)event.getSource();
         if(source.getName().equals(options[0])) {
         	this.setBrunchNum(source.getValue());

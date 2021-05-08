@@ -52,16 +52,7 @@ public abstract class Package implements Drawable{
 		return this.packageID;
 	}
 	
-	public String[] makeRow() 
-	{
-		String [] ar=new String [5];
-		ar[0]=Integer.toString(this.getPackageId());
-		ar[1]=this.getSenderAdress().getAddress();
-		ar[2]=this.getDestinationAdress().getAddress();
-		ar[3]=this.getPriority().toString();
-		ar[4]=this.getStatus().toString();
-		return ar;
-	}
+	
 	
 	public Priority getPriority() {
 		return priority;
@@ -116,7 +107,9 @@ public abstract class Package implements Drawable{
 	@Override
 	 synchronized public void DrawMe(Graphics g) {
 		
-		
+		/**
+		 * Interface function that draw object position  and change colors depend on status
+		 */
 		//DRAW PACKAGES DEPEND ON STATUS
 		Graphics2D g2d = (Graphics2D) g;
 		if(this.getStatus() == Status.CREATION)
@@ -149,6 +142,21 @@ public abstract class Package implements Drawable{
 			g2d.drawLine(215 + x_cor , 40 ,215 + x_cor , 540);
 		}
 		
+	}
+	
+	
+	public String[] makeRow() 
+	{
+		/**
+		 * Function used to put all tracking information of the package to table row
+		 */
+		String [] ar=new String [5];
+		ar[0]=Integer.toString(this.getPackageId());
+		ar[1]=this.getSenderAdress().getAddress();
+		ar[2]=this.getDestinationAdress().getAddress();
+		ar[3]=this.getPriority().toString();
+		ar[4]=this.getStatus().toString();
+		return ar;
 	}
 	
 	public void addTracking(Node node, Status status)

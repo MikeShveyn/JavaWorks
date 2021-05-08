@@ -30,6 +30,16 @@ import components2.Branch;
 import components2.MainOffice;
 
 public class myPanel extends JPanel {
+	
+	/**
+	 * 
+	 * ID 336249743
+	 * ID 336249628
+ 	 * 
+ 	 * Main GUI of the system shows moving objects and controls states like stop resume or
+ 	 *  opening new windows with additional information
+ 	 *  
+	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel p1, p2;
 	private JButton[] b_num;
@@ -69,6 +79,9 @@ public class myPanel extends JPanel {
 
 	// Systems
 	synchronized public void createSystem() {
+		/**
+		 * create and open Create Panel to get user input
+		 */
 		// Create Panel
 		JFrame options = new JFrame("Create post System");
 		setupPanel = new createPanel(this);
@@ -82,6 +95,9 @@ public class myPanel extends JPanel {
 	  @Override
 	  protected void paintComponent(Graphics g)
 	  {
+		  /**
+		   * Paint components on main screen by calling each drawable object special method
+		   */
 		  super.paintComponent(g);
 		  
 		  if(this.firstPaint) {
@@ -98,6 +114,9 @@ public class myPanel extends JPanel {
 	  
 	  public void createMainOffice(int numB,int numTr,int numPack)
 	  {
+		  /**
+		   * Create Main Office
+		   */
 		  game = new MainOffice(numB, numTr, numPack, this);
 		  this.firstPaint = true;
 		  repaint();
@@ -105,12 +124,18 @@ public class myPanel extends JPanel {
 	  
 
 	synchronized public void start() {
+		/**
+		 * Start Game -  Threads
+		 */
 		if (game != null) {
 			this.game.start();
 		}
 	}
 
 	synchronized public void stop() {
+		/** 
+		 * Stop Game threads
+		 */
 		MainOffice mainO =  ((MainOffice)game);
 		mainO.StopMe();
 		}
@@ -118,12 +143,18 @@ public class myPanel extends JPanel {
 
 
 	synchronized public void resume() {
+		/**
+		 * Resume game threads
+		 */
 		MainOffice mainO =  ((MainOffice)game);
 		mainO.ResumeMe();
 		notify();
 	}
 
 	synchronized public void packInfo() {
+		/**
+		 * Open new window and create table that holds all package's tracking information
+		 */
 		MainOffice mainO =  ((MainOffice)game);
 		JFrame f = new JFrame();
 		f.setTitle("Packages Info");
@@ -144,6 +175,9 @@ public class myPanel extends JPanel {
 	}
 
 	synchronized public void branchInfo() {
+		/**
+		 * Open new window that show branch information (packages that branch hold at that moment) 
+		 */
 		MainOffice mainO =  ((MainOffice)game);
 		int size=mainO.getHub().getBranches().size();
 		String s1[]=new String[size];
@@ -207,6 +241,9 @@ public class myPanel extends JPanel {
 }
 
 class ButtonListener implements ActionListener {
+	/**
+	 * Buttons handle
+	 */
 	private myPanel panel;
 	private int btn_ind;
 
@@ -216,6 +253,9 @@ class ButtonListener implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		/**
+		 * Respond on each system button click
+		 */
 		// {"Create System", "Start","Stop","Resume","All packages info", "Branch
 		// info"};
 		switch (btn_ind) {

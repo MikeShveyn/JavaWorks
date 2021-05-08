@@ -74,6 +74,10 @@ public class NonStandardTruck extends Truck implements Node {
 
 	
 	public void run() {
+		/**
+		 * Thread main loop call work function and go to sleep
+		 * Can be stopped and resumed 
+		 */
 		// TODO Auto-generated method stub
 		while(true)
 		{
@@ -114,6 +118,9 @@ public class NonStandardTruck extends Truck implements Node {
 
 	@Override
 	public void DrawMe(Graphics g) {
+		/**
+		 * Draw object
+		 */
 		// TODO Auto-generated method stub
 		//DRAW SELF
 		Graphics2D g2d = (Graphics2D) g;
@@ -138,6 +145,9 @@ public class NonStandardTruck extends Truck implements Node {
 	
 	public void Move()
 	{
+		/**
+		 * Move coordinates of the object
+		 */
 		x_origin += x_cor;
 		y_origin += y_cor;		
 		
@@ -223,7 +233,7 @@ public class NonStandardTruck extends Truck implements Node {
 		// clear van package list
 		this.getPackages().clear();
 
-		// print masasge
+		// print message
 		System.out.println("NonStandardTruck " + Integer.toString(this.getTruckID()) + " has delivered package "
 				+ Integer.toString(p.getPackageId()));
 	}

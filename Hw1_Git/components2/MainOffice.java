@@ -289,6 +289,7 @@ public class MainOffice extends Thread implements ThreadBand{
 					if(br.getBranchId() == sender.getZip())
 					{
 						br.getListPackages().add(pack);
+						br.localListPacks.add(pack);
 					}
 				}
 				
@@ -309,6 +310,7 @@ public class MainOffice extends Thread implements ThreadBand{
 					if(br.getBranchId() == sender.getZip())
 					{
 						br.getListPackages().add(pack);
+						br.localListPacks.add(pack);
 					
 					}
 				}
@@ -323,6 +325,7 @@ public class MainOffice extends Thread implements ThreadBand{
 				
 				//add package to Hub
 				hub.getBranches().get(0).getListPackages().add(pack);
+				hub.localListPacks.add(pack);
 				System.out.println("Creating " + pack.toString() );
 				break;
 				
@@ -349,6 +352,9 @@ public class MainOffice extends Thread implements ThreadBand{
 	
 	public String[][] rowNames()
 	{	
+		/**
+		 * make row from package tracking data
+		 */
 		if(this.packages.size()!=0) {
 			String[][] arr=new String[this.packages.size()][5];
 			int i=0;

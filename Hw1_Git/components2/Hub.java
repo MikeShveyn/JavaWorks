@@ -30,6 +30,7 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 	boolean isRun = true;
 	boolean getSleep = false;
 	private List<Integer> y_LineCr;
+	public ArrayList<Package> localListPacks;
 	//constructor
 	public Hub()
 	{	
@@ -37,6 +38,7 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 		this.y_LineCr = new ArrayList<>();
 		branches = new ArrayList<Branch>();
 		branches.add(new Branch("HUB"));
+		localListPacks = new ArrayList<>();
 		//hub is brunch in index 0 so we start count local brunches from 1 index
 		branchIndex = 1;
 	}
@@ -58,6 +60,11 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 	//Runnable interface
 	@Override
 	public void run() {
+		
+		/**
+		 * Thread main loop call work function and go to sleep
+		 * Can be stopped and resumed 
+		 */
 		
 		CalculateLines();
 		
@@ -98,7 +105,9 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 
 	@Override
 	synchronized public void DrawMe(Graphics g) {
-		
+		/**
+		 * Draw object and lines to branches
+		 */
 		// TODO Auto-generated method stub
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(new Color(20, 156, 31));
@@ -109,16 +118,16 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 		//DRAW LINES TO BRANCHES
 		for(int i = 1, j = 0 ; i < this.branches.size(); i ++, j += dj)
 		{
-			g2d.drawLine(1120, 220 + j, 50 , 80 + branches.get(i).y_cor);
+			g2d.drawLine(1120, 220 + j, 88 , 80 + branches.get(i).y_cor);
 		}
 		
 		//DRAW LINE TO NON STANDART PACK
 		g2d.setColor(Color.RED);
-		for(int i = 0; i < this.branches.get(0).getListPackages().size(); i ++)
+		for(int i = 0; i < this.localListPacks.size(); i ++)
 		{
-			if(this.branches.get(0).getListPackages().get(i) instanceof NonStandardPackage)
+			if(this.localListPacks.get(i) instanceof NonStandardPackage)
 			{
-				g2d.drawLine(1120, 200 , 200 + this.branches.get(0).getListPackages().get(i).x_cor , 25);
+				g2d.drawLine(1120, 200 , 200 + this.localListPacks.get(i).x_cor , 25);
 			}
 				
 		}
@@ -128,11 +137,15 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 	
 	public void CalculateLines()
 	{
-		int dj = 180 / (this.branches.size() - 1);
-		
-		for(int i = 1, j = 0 ; i < this.branches.size(); i++, j += dj)
+		/**
+		 * calculate lines from hub to branches 
+		 */
+		int dj = Math.round(180 / (this.branches.size() - 1));
+		int temp = 205;
+		for(int i = 1; i < this.branches.size(); i++)
 		{
-			this.y_LineCr.add(215+j); 
+			this.y_LineCr.add(temp); 
+			temp += dj;
 		}
 	}
 	
@@ -293,13 +306,13 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 				truck.getDestination().getBranchName()+ " time to arrive: " + truck.getTimeLeft());
 		
 		
-		truck.x_origin = 1120;
+		truck.x_origin = 1112;
 		truck.y_origin = y_LineCr.get(truck.getDestination().getBranchId());
 		
-		truck.x_start = 1120;
+		truck.x_start = 1112;
 		truck.y_start = y_LineCr.get(truck.getDestination().getBranchId());
 		
-		truck.x_Dest = 50;
+		truck.x_Dest = 82;
 		truck.y_Dest = 85 + truck.getDestination().y_cor;
 		
 		truck.x_cor = (truck.x_Dest - truck.x_origin)/(int)(truck.getTimeLeft());

@@ -79,6 +79,10 @@ public class StandardTruck extends Truck implements Node{
 	//Runnable interface
 	@Override
 	public void run() {
+		/**
+		 * Thread main loop call work function and go to sleep
+		 * Can be stopped and resumed 
+		 */
 		// TODO Auto-generated method stub
 		while(true)
 		{
@@ -117,6 +121,9 @@ public class StandardTruck extends Truck implements Node{
 
 	@Override
 	synchronized public void DrawMe(Graphics g) {
+		/**
+		 * Draw objec
+		 */
 		// TODO Auto-generated method stub
 		//DRAW SELF
 		Graphics2D g2d = (Graphics2D) g;
@@ -141,6 +148,9 @@ public class StandardTruck extends Truck implements Node{
 	
 	public void Move()
 	{
+		/**
+		 * Move coordinates of the object
+		 */
 		x_origin += x_cor;
 		y_origin += y_cor;		
 	}
@@ -283,7 +293,7 @@ public class StandardTruck extends Truck implements Node{
 				p.addTracking(destination, p.getStatus());
 				//add package to local branch
 				this.getDestination().getListPackages().add(p);
-				//this.getDestination().localListPacks.add(p);
+				this.getDestination().localListPacks.add(p);
 				
 			}	
 		//}

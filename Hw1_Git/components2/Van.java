@@ -36,6 +36,10 @@ public class Van extends Truck implements Node{
 	
 	
 	public void run() {
+		/**
+		 * Thread main loop call work function and go to sleep
+		 * Can be stopped and resumed 
+		 */
 		// TODO Auto-generated method stub
 		while(true)
 		{
@@ -73,6 +77,9 @@ public class Van extends Truck implements Node{
 
 	@Override
 	synchronized public void DrawMe(Graphics g) {
+		/**
+		 * Draw object
+		 */
 		// TODO Auto-generated method stub
 		//DRAW SELF
 			Graphics2D g2d = (Graphics2D) g;
@@ -94,6 +101,9 @@ public class Van extends Truck implements Node{
 	
 	public void Move()
 	{
+		/**
+		 * Move coordinates of the object
+		 */
 		x_origin += x_cor;
 		y_origin += y_cor;
 	}

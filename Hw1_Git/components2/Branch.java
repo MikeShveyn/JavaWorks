@@ -33,18 +33,18 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 	boolean isRun = true;
 	boolean getSleep = false;
 	public int y_cor;
-	//public ArrayList<Package> localListPacks;
+	public ArrayList<Package> localListPacks;
 	//Constructor------------------------------------------------------------------------------------------------------------
 	public Branch(int ycr)
 	{	
 		super();
 		this.y_cor = ycr;
-
+		
 		this.branchId = idCounter;
 		this.branchName="Branch " + Integer.toString(branchId);
 		listTrucks = new ArrayList<Truck>();
 		listPackages = new ArrayList<Package>();
-		//localListPacks = new ArrayList<>();
+		localListPacks = new ArrayList<>();
 		idCounter++;
 		System.out.println("Creating Branch " + Integer.toString(branchId) + this);
 		
@@ -107,6 +107,11 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 	@Override
 	public void run()
 	{
+		
+		/**
+		 * Thread main loop call work function and go to sleep
+		 * Can be stopped and resumed 
+		 */
 	
 		while(true)
 		{
@@ -149,14 +154,22 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 		//DRAW SELF
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(new Color(133, 143, 237));
+		for(int i = 0 ;i < this.listPackages.size(); i++)
+		{
+			if(this.getListPackages().get(i).getStatus() == Status.BRANCH_STORAGE)
+				g2d.setColor(Color.BLUE);
+		}
+			
 		g2d.fillRect(50, 70 + y_cor, 40,30);
 		
 	
 		//DRAW LINES TO PACKAGES SENDR AND RECIVER
-		for(int i = 0; i < this.listPackages.size(); i ++)
+		for(int i = 0; i < this.localListPacks.size(); i ++)
 		{
-			g2d.drawLine(90, 85 + y_cor ,215 + this.listPackages.get(i).x_cor , 25);
-			g2d.drawLine(90, 85 + y_cor ,215 + this.listPackages.get(i).x_cor , 555);
+			if(this.localListPacks.get(i).getSenderAdress().getZip() == this.getBranchId())
+				g2d.drawLine(90, 85 + y_cor ,215 + this.localListPacks.get(i).x_cor , 40);
+			if(this.localListPacks.get(i).getDestinationAdress().getZip() == this.getBranchId())
+				g2d.drawLine(90, 85 + y_cor ,215 + this.localListPacks.get(i).x_cor , 540);
 		}
 		
 	
@@ -245,13 +258,13 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 					System.out.println("Van " + Integer.toString(tr.getTruckID()) +  " is collecting package " + Integer.toString(p.getPackageId())
 					+ ", time to arrive: " + Double.toString(tr.getTimeLeft()));
 					
-					tr.x_origin = 80;
-					tr.y_origin = 82 + this.y_cor;
-					tr.x_Dest = 200 + p.x_cor;
-					tr.y_Dest = 25;
+					tr.x_origin = 82;
+					tr.y_origin = 80 + this.y_cor;
+					tr.x_Dest = 207 + p.x_cor;
+					tr.y_Dest = 35;
 					
-					tr.x_cor = (tr.x_Dest - tr.x_origin)/(int)(tr.getTimeLeft());
-					tr.y_cor = (tr.y_Dest - tr.y_origin)/(int)(tr.getTimeLeft());
+					tr.x_cor = (int)((tr.x_Dest - tr.x_origin)/(tr.getTimeLeft()));
+					tr.y_cor = (int)((tr.y_Dest - tr.y_origin)/(tr.getTimeLeft()));
 					
 					tr.setAvaliable(false);
 					break;
@@ -287,13 +300,13 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 					System.out.println("Van " + Integer.toString(tr.getTruckID()) +  " is delivering package " + Integer.toString(p.getPackageId())
 					+ ", time to arrive: " + Double.toString(tr.getTimeLeft()));
 					
-					tr.x_origin = 80;
-					tr.y_origin = 82 + this.y_cor;
-					tr.x_Dest = 200 + p.x_cor;
-					tr.y_Dest = 555;
+					tr.x_origin = 82;
+					tr.y_origin = 80 + this.y_cor;
+					tr.x_Dest = 223 + p.x_cor;
+					tr.y_Dest = 545;
 					
-					tr.x_cor = (tr.x_Dest - tr.x_origin)/(int)(tr.getTimeLeft());
-					tr.y_cor = (tr.y_Dest - tr.y_origin)/(int)(tr.getTimeLeft());
+					tr.x_cor = (int)((tr.x_Dest - tr.x_origin)/(tr.getTimeLeft()));
+					tr.y_cor = (int)((tr.y_Dest - tr.y_origin)/(tr.getTimeLeft()));
 					
 					
 					tr.setAvaliable(false);
@@ -354,6 +367,9 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 
 		public String[][] makePInfo()
 		{
+			/**
+			 * make table row from package tracking
+			 */
 			String[][] arr=new String[this.listPackages.size()][5];
 			if(this.listPackages.size()==0){return null;}
 			int i=0;
