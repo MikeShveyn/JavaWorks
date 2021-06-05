@@ -24,7 +24,7 @@ class createPanel extends JPanel implements ActionListener, ChangeListener{
 	 * Represent USER INPUT GUI
 	 */
 	private static final long serialVersionUID = 1L;
-	private String[] options= {"Number of Branches","Number of trucks per brunch","Number of packages"};
+	private String[] options= {"Number of Branches","Number of trucks per brunch"};
 	private JButton OkButton,CancelButton;
 	JSlider branches,trucks,packs;
 	private int branhesNum,trucksNum,packsNum;
@@ -64,22 +64,18 @@ class createPanel extends JPanel implements ActionListener, ChangeListener{
 		trucks.addChangeListener(this);
 		p1.add(trucks);
 		
-		JLabel label3=new JLabel();
-		label3.setText(options[2]);
-		p1.add(label3);
-		
-		packs=new JSlider(2,20);
-		packs.setMajorTickSpacing(2);
-		packs.setName(options[2]);
-		packs.setPaintTrack(true);
-		packs.setPaintTicks(true);
-		packs.setPaintLabels(true);
-		packs.addChangeListener(this);
-		p1.add(packs);
+		/*
+		 * JLabel label3=new JLabel(); label3.setText(options[2]); p1.add(label3);
+		 */
+		/*
+		 * packs=new JSlider(2,20); packs.setMajorTickSpacing(2);
+		 * packs.setName(options[2]); packs.setPaintTrack(true);
+		 * packs.setPaintTicks(true); packs.setPaintLabels(true);
+		 * packs.addChangeListener(this); p1.add(packs);
+		 */
 		
 		this.setBrunchNum(branches.getValue());
 		this.setTrucksNum(trucks.getValue());
-		this.setPacksNum(packs.getValue());
 		
 		JPanel p2 = new JPanel();
 		p2.setLayout(new GridLayout(1,2));
@@ -114,9 +110,6 @@ class createPanel extends JPanel implements ActionListener, ChangeListener{
 		this.trucksNum=t;
 	}
 	
-	public void setPacksNum(int p) {
-		this.packsNum=p;
-	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -128,7 +121,7 @@ class createPanel extends JPanel implements ActionListener, ChangeListener{
 		String action = e.getActionCommand();
 		if(action.equals("Ok")) 
 		{
-			p.createMainOffice(branhesNum, trucksNum, packsNum);
+			p.createMainOffice(branhesNum, trucksNum);
 			JFrame t=(JFrame)SwingUtilities.getWindowAncestor(this);
 			t.dispose();
 		}
@@ -151,9 +144,7 @@ class createPanel extends JPanel implements ActionListener, ChangeListener{
         else if(source.getName().equals(options[1])) {
         	this.setTrucksNum(source.getValue());
         }
-        else if(source.getName().equals(options[2])) {
-        	this.setPacksNum(source.getValue());
-        }
+      
         
 	}
 }

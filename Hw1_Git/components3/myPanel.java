@@ -43,7 +43,7 @@ public class myPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JPanel p1, p2;
 	private JButton[] b_num;
-	private String[] names = { "Create System", "Start", "Stop", "Resume", "All packages info", "Branch info"};
+	private String[] names = { "Create System", "Start", "Stop", "Resume", "All packages info", "Branch info", "Clone Branch", "Restore", "Report"};
 	private MainOffice game;
 	private createPanel setupPanel;
 	private boolean firstPaint = false;
@@ -112,12 +112,12 @@ public class myPanel extends JPanel {
 
 	  }
 	  
-	  public void createMainOffice(int numB,int numTr,int numPack)
+	  public void createMainOffice(int numB,int numTr)
 	  {
 		  /**
 		   * Create Main Office
 		   */
-		  game = new MainOffice(numB, numTr, numPack, this);
+		  game = MainOffice.getInstance(numB, numTr,this);
 		  this.firstPaint = true;
 		  repaint();
 	  }
@@ -136,7 +136,7 @@ public class myPanel extends JPanel {
 		/** 
 		 * Stop Game threads
 		 */
-		MainOffice mainO =  ((MainOffice)game);
+		MainOffice mainO = ((MainOffice)game);
 		mainO.StopMe();
 		}
 		
@@ -238,6 +238,54 @@ public class myPanel extends JPanel {
 		{	JOptionPane.showMessageDialog(null, "this branch has 0 packages.","Message", JOptionPane.ERROR_MESSAGE);	}
 			
 	}
+
+	public void cloneBranch() {
+		MainOffice mainO =  ((MainOffice)game);
+		JFrame f = new JFrame();
+		f.setTitle("Clone Branche");
+		
+		int size=mainO.getHub().getBranches().size() -1;
+		System.out.println(size);
+		String branchesNames[]=new String[size];
+		for(int i=1;i<=size;i++)
+		{
+			branchesNames[i-1]=mainO.getHub().getBranches().get(i).getBranchName();
+		}
+		
+		JComboBox<String> box=new JComboBox<String>(branchesNames);
+		JPanel p = new JPanel();
+		p.add(box);
+		f.add(p);
+		box.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JComboBox comboBox = (JComboBox) e.getSource();				
+				item = comboBox.getSelectedItem();
+				
+				DoTheCopy();
+			}
+
+			private void DoTheCopy() {
+				// TODO Auto-generated method stub
+				
+			}});
+		
+		
+		f.setSize(400,300);
+		f.setVisible(true);
+		
+	}
+
+	public void restore() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void report() {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
 class ButtonListener implements ActionListener {
@@ -256,8 +304,7 @@ class ButtonListener implements ActionListener {
 		/**
 		 * Respond on each system button click
 		 */
-		// {"Create System", "Start","Stop","Resume","All packages info", "Branch
-		// info"};
+		// { "Create System", "Start", "Stop", "Resume", "All packages info", "Branch info", "Clone Branch", "Restore", "Report"}
 		switch (btn_ind) {
 		case 0:
 			panel.createSystem();
@@ -278,6 +325,16 @@ class ButtonListener implements ActionListener {
 		case 5:
 			panel.branchInfo();
 			break;
+		case 6: 
+			panel.cloneBranch();
+			break;
+		case 7:
+			panel.restore();
+			break;
+		case 8:
+			panel.report();
+			break;
+		
 		}
 
 	}
