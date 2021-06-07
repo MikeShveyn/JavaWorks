@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -121,7 +122,12 @@ class createPanel extends JPanel implements ActionListener, ChangeListener{
 		String action = e.getActionCommand();
 		if(action.equals("Ok")) 
 		{
-			p.createMainOffice(branhesNum, trucksNum);
+			try {
+				p.createMainOffice(branhesNum, trucksNum);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			JFrame t=(JFrame)SwingUtilities.getWindowAncestor(this);
 			t.dispose();
 		}

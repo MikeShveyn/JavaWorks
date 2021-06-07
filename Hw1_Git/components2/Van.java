@@ -3,6 +3,7 @@ package components2;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.IOException;
 
 import components1.Node;
 import components1.Status;
@@ -162,6 +163,7 @@ public class Van extends Truck implements Node{
 			//change package status
 			p.setStatus(Status.BRANCH_STORAGE);
 			p.addTracking(this, p.getStatus());
+			
 		
 			//print massage
 			System.out.println("Van " + Integer.toString(this.getTruckID()) + " has collected package " + Integer.toString(p.getPackageId())
@@ -186,6 +188,14 @@ public class Van extends Truck implements Node{
 		//package status
 		p.setStatus(Status.DELIVERED);
 		p.addTracking(null, p.getStatus());
+		
+		
+		try {
+			MainOffice.getInstance(1, 1, null).printReport(p);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//print massage
 		System.out.println("Van " + Integer.toString(this.getTruckID()) + " has delivered package "+ Integer.toString(p.getPackageId())

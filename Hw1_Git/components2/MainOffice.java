@@ -1,7 +1,10 @@
 package components2;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import components1.Drawable;
@@ -21,6 +24,7 @@ import components3.myPanel;
  */
 
 public class MainOffice extends Thread implements ThreadBand {
+	
 
 	static MainOffice mainOfInstance;
 	static int clock;
@@ -35,8 +39,12 @@ public class MainOffice extends Thread implements ThreadBand {
 
 	private int xPackCor = 0;
 	private int dxPackCor = 0;
+	
+	private File file;
+	Log packageLog;
+		
 
-	public static MainOffice getInstance(int branches, int trucksForBranch, myPanel lp) {
+	public static MainOffice getInstance(int branches, int trucksForBranch, myPanel lp) throws IOException {
 		if (mainOfInstance == null) {
 			mainOfInstance = new MainOffice(branches, trucksForBranch,lp);
 		}
@@ -45,7 +53,7 @@ public class MainOffice extends Thread implements ThreadBand {
 
 	// constructor
 	// ------------------------------------------------------------------------------------
-	private MainOffice(int branches, int trucksForBranch,myPanel lp) {
+	private MainOffice(int branches, int trucksForBranch,myPanel lp) throws IOException {
 		super();
 		/**
 		 * Set clock to 0 ArrayList of packages to null
@@ -53,7 +61,10 @@ public class MainOffice extends Thread implements ThreadBand {
 		 * Create Hub and trucks for hub Create Branches and trucks for each brunch
 		 * 
 		 */
-			
+		
+		file = new File("PackageLog.txt");
+		packageLog = new Log(file);
+		
 		this.localPanel = lp;
 		clock = 0;
 		packages = new ArrayList<Package>();
@@ -173,6 +184,8 @@ public class MainOffice extends Thread implements ThreadBand {
 		 * the end of play time loop print tracking report
 		 */
 		// List Add start
+		
+		
 		Start();
 		StartCustomers();
 		
@@ -216,7 +229,7 @@ public class MainOffice extends Thread implements ThreadBand {
 			executor.execute (new Customer(this));
 		}
 		
-		
+		((ExecutorService) executor).shutdown(); 
 	}
 	
 	private void tick() {
@@ -226,6 +239,7 @@ public class MainOffice extends Thread implements ThreadBand {
 		// clock setup
 		System.out.println(clockString());
 		this.setClock(clock + 1);
+		
 
 	}
 
@@ -276,16 +290,15 @@ public class MainOffice extends Thread implements ThreadBand {
 		return null;
 	}
 
-	public void printReport() {
+	public void printReport(Package p) {
 		/**
 		 * Print tracking of all packages was created by the system
 		 */
-
-		System.out.println(
-				"========================================!!!STOP!!!=========================================================");
-		for (Package p : packages) {
-			System.out.println("Tracking " + p);
-			p.printTracking();
+			try {
+				packageLog.writeEntry(p.printTracking());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 		}
 
 	}

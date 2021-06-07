@@ -3,6 +3,7 @@ package components2;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.IOException;
 
 import components1.Node;
 import components1.Status;
@@ -230,6 +231,14 @@ public class NonStandardTruck extends Truck implements Node {
 		// change pack status
 		p.setStatus(Status.DELIVERED);
 		p.addTracking(null, p.getStatus());
+		
+		try {
+			MainOffice.getInstance(1, 1, null).printReport(p);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		// clear van package list
 		this.getPackages().clear();
 

@@ -169,15 +169,14 @@ public abstract class Package implements Drawable{
 	
 	
 	
-	public void printTracking()
+	public String printTracking()
 	{
 		/**
 		 * Print each tracking point of package
 		 */
-		for(Tracking track : tracking)
-		{
-			System.out.println(track);
-		}
+			String s = "Sender: " + this.senderAdress.toString() + " Package: " + this.packageID + 
+					" Status: " + this.getTracking().get(this.getTracking().size() - 1).getStatus();
+			return s;
 	}
 	
 	

@@ -1,4 +1,7 @@
 package components2;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import components1.Address;
@@ -9,10 +12,12 @@ public class Customer implements Runnable{
 	private int id;
 	private Address sender;
 	private MainOffice mO;
+	private List<Package> packs;
 	Random rand = new Random();
 
 public Customer(MainOffice mo)
 {
+	this.packs = new ArrayList<Package>();
 	mO = mo;
 	this.sender = new Address(getRundomNumber(0, this.mO.hub.getBranches().size() - 1), getRundomNumber(100000, 999999));   
 	this.id = idCounter;
@@ -114,6 +119,7 @@ private void addPackage()
 		this.mO.setxPackCor(temp+this.mO.getDxPackCor());
 		this.mO.packages.add(pack);
 		this.mO.drawObjects.add(pack);
+		this.packs.add(pack);
 	}
 	else
 		System.err.println("Main office Switch case Bug!!!");
@@ -155,7 +161,50 @@ public void run() {
 		}
 		
 		/// read txt
+		try {
+			
+			List<String> data = this.mO.packageLog.readEntry();
+			if(data != null)
+			{
+				int count = 0;
+				for(String log : data)
+				{
+					if(log.contains(this.sender.toString()))
+					{
+						count++;
+					}
+				}
+				
+				if(count == 5)
+					numPacks = 0;
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
 	}
+	
+	for(Package p: this.packs)
+	{
+		this.mO.drawObjects.remove(p);
+		this.mO.hub.localListPacks.remove(p);
+		for(int i = 1; i < this.mO.hub.getBranches().size(); i++)
+		{
+			this.mO.hub.getBranches().get(i).localListPacks.remove(p);
+		}
+		
+	}
+	
+	if(this.mO.getxPackCor() > 400)
+		this.mO.setxPackCor(0);
+	else
+		this.mO.setxPackCor(400);
+	
+	System.out.println(this.id + " Customer Done!!!");
 }
 
 

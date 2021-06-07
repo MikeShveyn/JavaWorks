@@ -3,6 +3,7 @@ package components2;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import components1.Drawable;
@@ -254,6 +255,7 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 					p.setStatus(Status.COLLECTION);
 					p.addTracking((Van)tr, p.getStatus());
 					
+					
 					//Print massage
 					System.out.println("Van " + Integer.toString(tr.getTruckID()) +  " is collecting package " + Integer.toString(p.getPackageId())
 					+ ", time to arrive: " + Double.toString(tr.getTimeLeft()));
@@ -295,6 +297,7 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 					//package setup
 					p.setStatus(Status.DISTRIBUTION);
 					p.addTracking((Van)tr, p.getStatus());
+					
 					
 					//print massage
 					System.out.println("Van " + Integer.toString(tr.getTruckID()) +  " is delivering package " + Integer.toString(p.getPackageId())

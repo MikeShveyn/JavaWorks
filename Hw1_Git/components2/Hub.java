@@ -3,6 +3,7 @@ package components2;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -266,6 +267,7 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 						//change package tracking
 						collectPackage(temp.get(i));
 						temp.get(i).addTracking(truck, temp.get(i).getStatus());
+
 						
 						//add package to truck and remove from hub
 						truck.getPackages().add(temp.get(i));
@@ -345,6 +347,7 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 					//Package tracking
 					collectPackage(temp.get(i));
 					temp.get(i).addTracking(truck, temp.get(i).getStatus());
+					
 					
 					//Setup truck time and print massage
 					

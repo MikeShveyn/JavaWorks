@@ -5,6 +5,7 @@ package components2;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import components1.Node;
@@ -291,6 +292,8 @@ public class StandardTruck extends Truck implements Node{
 			{
 				p.setStatus(Status.DELIVERY);
 				p.addTracking(destination, p.getStatus());
+				
+	
 				//add package to local branch
 				this.getDestination().getListPackages().add(p);
 				this.getDestination().localListPacks.add(p);
