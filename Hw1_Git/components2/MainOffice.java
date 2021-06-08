@@ -1,5 +1,6 @@
 package components2;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,9 +41,13 @@ public class MainOffice extends Thread implements ThreadBand {
 	private int xPackCor = 0;
 	private int dxPackCor = 0;
 	
+	private int dy_cor;
+	private int y_cor;
+	
 	private File file;
 	Log packageLog;
-		
+	private Caretaker caretaker;
+	private Originator originator;
 
 	public static MainOffice getInstance(int branches, int trucksForBranch, myPanel lp) throws IOException {
 		if (mainOfInstance == null) {
@@ -61,6 +66,9 @@ public class MainOffice extends Thread implements ThreadBand {
 		 * Create Hub and trucks for hub Create Branches and trucks for each brunch
 		 * 
 		 */
+		
+		this.caretaker = new Caretaker();
+		this.originator = new Originator();
 		
 		file = new File("PackageLog.txt");
 		packageLog = new Log(file);
@@ -102,8 +110,8 @@ public class MainOffice extends Thread implements ThreadBand {
 		drawObjects.add(nstr);
 
 		/// calculate y between branches
-		int dy_cor = 470 / branches;
-		int y_cor = 0;
+		dy_cor = 470 / branches;
+		y_cor = 0;
 		// calculate packages dx
 		this.setDxPackCor(800 / 10);
 
@@ -114,7 +122,7 @@ public class MainOffice extends Thread implements ThreadBand {
 			Branch br = new Branch(y_cor);
 			hub.getBranches().add(br);
 			threadBands.add(br);
-			gameThreads.add(br);
+			gameThreads.add(new Thread(br));
 			drawObjects.add(br);
 			y_cor += dy_cor;
 			// add Vans for branch
@@ -310,6 +318,82 @@ public class MainOffice extends Thread implements ThreadBand {
 		int min = clock / 60;
 		int sec = clock % 60;
 		return Integer.toString(min) + ":" + Integer.toString(sec);
+	}
+	
+	public void OpneFile()
+	{
+		try  
+		{  
+		//constructor of file class having file as argument  
+		File file = this.file;
+		if(!Desktop.isDesktopSupported())//check if Desktop is supported by Platform or not  
+		{  
+			System.out.println("not supported");  
+			return;  
+		}  
+		Desktop desktop = Desktop.getDesktop();  
+		if(file.exists())         //checks file exists or not  
+			desktop.open(file);              //opens the specified file  
+		}  
+		catch(Exception e)  
+		{  
+			e.printStackTrace();  
+		}  
+	}
+	
+	
+	public void CopyBranch(Object item, int numTr)
+	{
+		//Save state
+		this.caretaker.add(null);
+		
+		for(Branch br: this.hub.getBranches())
+		{
+			if(br.getBranchName().equals(item.toString()))
+			{
+				Branch temp = (Branch)br.clone();
+				//temp.SetId(temp.GetId() + 1);
+				temp.setBranchId(temp.GetId());
+				temp.setBranchName("Branch " + temp.getBranchId());
+				temp.y_cor = this.y_cor;
+				this.y_cor += this.dy_cor;
+				temp.getListPackages().clear();
+				temp.getListTrucks().clear();
+				
+				
+				for(int i = 0; i < numTr; i++)
+				{
+					Van v = new Van();
+					temp.getListTrucks().add(v);
+					threadBands.add(v);
+					gameThreads.add(v);
+					drawObjects.add(v);
+				}
+				
+				
+				Thread tempTh = new Thread(temp);
+				this.hub.getBranches().add(temp);
+				this.gameThreads.add(tempTh);
+				this.drawObjects.add(temp);
+				this.threadBands.add(temp);
+				
+				
+				
+				for(Thread tr: this.gameThreads)
+				{
+					if(!tr.isAlive())
+						tr.start();
+				}
+				
+				break;
+			}
+		}
+	}
+	
+	public void Restore()
+	{
+		//restore state;
+
 	}
 
 	// HELP FUCNTION

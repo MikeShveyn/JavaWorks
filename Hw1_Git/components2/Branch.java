@@ -25,7 +25,7 @@ import components1.ThreadBand;
  */
 
 
-public class Branch extends Thread implements Node, ThreadBand, Drawable{
+public class Branch implements Node, Cloneable, ThreadBand, Drawable, Runnable{
 	private static int idCounter=-1;
 	private int branchId;
 	private String branchName;
@@ -98,6 +98,16 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 
 	public void setListPackages(ArrayList<Package> listPackages) {
 		this.listPackages = listPackages;
+	}
+	
+	public  int GetId()
+	{
+		return idCounter;
+	}
+	
+	public int SetId(int i)
+	{
+		return idCounter = i;
 	}
 	
 	
@@ -195,17 +205,7 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 		
 	}
 	
-	
-	private void ApplyWork()
-	{
-		/**
-		 * Apply work to each van
-		 */
-		for(Truck tr: listTrucks)
-		{
-			((Node)tr).work();
-		}
-	}
+
 	
 	synchronized private void PackagesLogic()
 	{
@@ -384,6 +384,17 @@ public class Branch extends Thread implements Node, ThreadBand, Drawable{
 			}
 			return arr;
 		}
+		
+		@Override
+		 public Object clone() {
+		      Object clone = null;
+		      try {
+		         clone = super.clone();
+		      } catch (CloneNotSupportedException e) {
+		         e.printStackTrace();
+		      }
+		      return clone;
+		   }
 	
 	
 	

@@ -159,41 +159,13 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 		 * Find all available hub's trucks , depends on type load and send them 
 		 */
 		
-		//Apply work to all brunches and trucks
-		//ApplyWork();
-		
 		//Load and Send available trucks
 		LoadAndSend();
 		
 	}
 	
-	
-	private void ApplyWork()
-	{
-		/**
-		 * apply work() for all local brunches and hub's trucks
-		 */
-		
-		for(Node nd : branches)
-		{
-			if(((Branch)nd).getBranchName() != "HUB")
-			{	
-				nd.work();
-				
-			}
-			else
-			{
-				for(Truck tr: this.getBranches().get(0).getListTrucks())
-				{
-					((Node)tr).work();
-				}
-				
-			}
-			
-		}
-	}
-	
-	
+
+
 	
 	private void LoadAndSend()
 	{

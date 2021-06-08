@@ -21,16 +21,20 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import components1.Drawable;
 import components1.Tracking;
+import components2.Caretaker;
 import components2.Branch;
 import components2.MainOffice;
 
-public class myPanel extends JPanel {
+public class myPanel extends JPanel implements ChangeListener,ActionListener {
 	
 	/**
 	 * 
@@ -49,7 +53,10 @@ public class myPanel extends JPanel {
 	private createPanel setupPanel;
 	private boolean firstPaint = false;
 	private boolean startPaint = false;
-	Object item;
+	Object item; // Branch Info
+	Object item2; // Branch Clone
+	int brunchNum;
+	JFrame f;
 	
 	public myPanel() {
 		setBackground(Color.white);
@@ -162,7 +169,7 @@ public class myPanel extends JPanel {
 		String[] columnNames = {"Package ID", "Sender", "Destination", "Priority", "Status"};
 		String[][] rowNames=mainO.rowNames();
 		if(rowNames!=null)
-		{	mainO.printReport();
+		{	
 			JTable j = new JTable(rowNames, columnNames);
 			j.setBounds(50, 70, 200, 300);
 			JScrollPane sp = new JScrollPane(j);
@@ -242,7 +249,7 @@ public class myPanel extends JPanel {
 
 	public void cloneBranch() {
 		MainOffice mainO =  ((MainOffice)game);
-		JFrame f = new JFrame();
+		f = new JFrame();
 		f.setTitle("Clone Branche");
 		
 		int size=mainO.getHub().getBranches().size() -1;
@@ -255,27 +262,54 @@ public class myPanel extends JPanel {
 		
 		JComboBox<String> box=new JComboBox<String>(branchesNames);
 		JPanel p = new JPanel();
+		
+		JLabel label1=new JLabel();
+		label1.setText("Number of trucks:");
+		p.add(label1);
+		
+		JSlider branches=new JSlider(1,10);
+		branches.setMajorTickSpacing(1);
+		branches.setPaintTrack(true);
+		branches.setPaintTicks(true);
+		branches.setPaintLabels(true);
+		branches.setName("branchNum");
+		branches.addChangeListener(this);
+		
+		
+		JButton OkButton=new JButton("Ok");
+		OkButton.addActionListener(this);
+		
 		p.add(box);
+		p.add(branches);
+		p.add(OkButton);
 		f.add(p);
 		box.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JComboBox comboBox = (JComboBox) e.getSource();				
-				item = comboBox.getSelectedItem();
-				
-				DoTheCopy();
+				item2 = comboBox.getSelectedItem();
 			}
 
-			private void DoTheCopy() {
-				// TODO Auto-generated method stub
-				
-			}});
+			});
 		
 		
 		f.setSize(400,300);
 		f.setVisible(true);
 		
+	}
+	
+	@Override
+	public void stateChanged(ChangeEvent event) {
+		/**
+		 * Change variables by moving sliders
+		 */
+		JSlider source = (JSlider)event.getSource();
+        if(source.getName().equals("branchNum")) {
+        	brunchNum=source.getValue();
+        }
+      
+        
 	}
 
 	public void restore() {
@@ -285,7 +319,13 @@ public class myPanel extends JPanel {
 
 	public void report() {
 		// TODO Auto-generated method stub
-		
+		game.OpneFile();
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		game.CopyBranch(item2, brunchNum);
+		this.f.dispose();
 	}
 }
 
