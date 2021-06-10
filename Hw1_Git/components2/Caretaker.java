@@ -1,16 +1,14 @@
 package components2;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class Caretaker {
-	private List<Momento> mementoList = new ArrayList<Momento>();
+		private Momento state;
 
 	   public void add(Momento state){
-	      mementoList.add(state);
+	      this.state = state;
 	   }
 
-	   public Momento get(int index){
-	      return mementoList.get(index);
+	   public Momento getLastState(){
+	      return state;
 	   }
 }

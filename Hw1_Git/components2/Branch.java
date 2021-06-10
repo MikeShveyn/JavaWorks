@@ -35,6 +35,8 @@ public class Branch implements Node, Cloneable, ThreadBand, Drawable, Runnable{
 	boolean getSleep = false;
 	public int y_cor;
 	public ArrayList<Package> localListPacks;
+	private boolean isEnd = false;
+	Graphics2D g2d;
 	//Constructor------------------------------------------------------------------------------------------------------------
 	public Branch(int ycr)
 	{	
@@ -118,13 +120,14 @@ public class Branch implements Node, Cloneable, ThreadBand, Drawable, Runnable{
 	@Override
 	public void run()
 	{
-		
+	
+		System.out.println("Iam Aliveeeeeeeeeeeeeeeeeeeeeeeeeee");
 		/**
 		 * Thread main loop call work function and go to sleep
 		 * Can be stopped and resumed 
 		 */
 	
-		while(true)
+		while(!this.isEnd)
 		{
 			try {
 				Thread.sleep(500);
@@ -141,6 +144,8 @@ public class Branch implements Node, Cloneable, ThreadBand, Drawable, Runnable{
 				work();
 			
 		}
+		
+		System.out.println("Deadddddddddddddddddddddddddddddddd");
 	}
 	
 
@@ -163,7 +168,7 @@ public class Branch implements Node, Cloneable, ThreadBand, Drawable, Runnable{
 	@Override
 	synchronized public void DrawMe(Graphics g) {
 		//DRAW SELF
-		Graphics2D g2d = (Graphics2D) g;
+		g2d = (Graphics2D) g;
 		g2d.setColor(new Color(133, 143, 237));
 		for(int i = 0 ;i < this.listPackages.size(); i++)
 		{
@@ -186,8 +191,7 @@ public class Branch implements Node, Cloneable, ThreadBand, Drawable, Runnable{
 	
 	}
 
-	
-	
+
 	
 	@Override
 	public void work() {
@@ -395,6 +399,13 @@ public class Branch implements Node, Cloneable, ThreadBand, Drawable, Runnable{
 		      }
 		      return clone;
 		   }
+
+
+		@Override
+		public void EndMe() {
+			// TODO Auto-generated method stub
+			this.isEnd = true;
+		}
 	
 	
 	

@@ -82,6 +82,11 @@ public abstract class Truck extends Thread implements ThreadBand, Drawable, Dyna
 	public int getTruckID() {
 		return truckID;
 	}
+	
+	public void EndMe()
+	{
+		
+	}
 
 
 

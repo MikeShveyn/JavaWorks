@@ -196,7 +196,7 @@ public class Van extends Truck implements Node{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+			
 		//print massage
 		System.out.println("Van " + Integer.toString(this.getTruckID()) + " has delivered package "+ Integer.toString(p.getPackageId())
 					+ " to the destination");

@@ -12,6 +12,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -33,6 +34,7 @@ import components1.Tracking;
 import components2.Caretaker;
 import components2.Branch;
 import components2.MainOffice;
+import components2.Momento;
 
 public class myPanel extends JPanel implements ChangeListener,ActionListener {
 	
@@ -58,6 +60,8 @@ public class myPanel extends JPanel implements ChangeListener,ActionListener {
 	int brunchNum;
 	JFrame f;
 	
+	private Caretaker caretaker;
+	
 	public myPanel() {
 		setBackground(Color.white);
 		p1 = new JPanel();
@@ -77,11 +81,12 @@ public class myPanel extends JPanel implements ChangeListener,ActionListener {
 
 		setLayout(new BorderLayout());
 		add("South", p2);
-		
+		this.caretaker = new Caretaker();
 
 	}
 
 	public void destroy() {
+		game.ShutDown();
 		System.exit(0);
 	}
 
@@ -313,8 +318,8 @@ public class myPanel extends JPanel implements ChangeListener,ActionListener {
 	}
 
 	public void restore() {
-		// TODO Auto-generated method stub
-		
+		this.game.getSystemBack();
+		System.out.println("!!!Restore!!!!");
 	}
 
 	public void report() {

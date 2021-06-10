@@ -32,7 +32,7 @@ public class MainOffice extends Thread implements ThreadBand {
 	Hub hub;
 	ArrayList<Package> packages;
 	boolean isRun = true;
-
+	Branch temp1;
 	public ArrayList<Drawable> drawObjects;
 	ArrayList<ThreadBand> threadBands;
 	ArrayList<Thread> gameThreads;
@@ -46,8 +46,8 @@ public class MainOffice extends Thread implements ThreadBand {
 	
 	private File file;
 	Log packageLog;
-	private Caretaker caretaker;
-	private Originator originator;
+	Momento moment;
+	Executor executor;
 
 	public static MainOffice getInstance(int branches, int trucksForBranch, myPanel lp) throws IOException {
 		if (mainOfInstance == null) {
@@ -67,8 +67,7 @@ public class MainOffice extends Thread implements ThreadBand {
 		 * 
 		 */
 		
-		this.caretaker = new Caretaker();
-		this.originator = new Originator();
+		
 		
 		file = new File("PackageLog.txt");
 		packageLog = new Log(file);
@@ -231,13 +230,19 @@ public class MainOffice extends Thread implements ThreadBand {
 	private void StartCustomers()
 	{
 		// 2.Execute two threads simultaneously
-		Executor executor = Executors.newFixedThreadPool (2);
+		executor = Executors.newFixedThreadPool (2);
 		for(int i = 0; i <10; i++)
 		{
 			executor.execute (new Customer(this));
 		}
 		
 		((ExecutorService) executor).shutdown(); 
+	}
+	
+	
+	public void ShutDown()
+	{
+		((ExecutorService) executor).shutdownNow(); 
 	}
 	
 	private void tick() {
@@ -344,38 +349,36 @@ public class MainOffice extends Thread implements ThreadBand {
 	
 	public void CopyBranch(Object item, int numTr)
 	{
-		//Save state
-		this.caretaker.add(null);
+		this.saveToMomento();
 		
 		for(Branch br: this.hub.getBranches())
 		{
 			if(br.getBranchName().equals(item.toString()))
 			{
-				Branch temp = (Branch)br.clone();
+				temp1 = (Branch)br.clone();
 				//temp.SetId(temp.GetId() + 1);
-				temp.setBranchId(temp.GetId());
-				temp.setBranchName("Branch " + temp.getBranchId());
-				temp.y_cor = this.y_cor;
+				temp1.setBranchId(temp1.GetId());
+				temp1.setBranchName("Branch " + temp1.getBranchId());
+				temp1.y_cor = this.y_cor;
 				this.y_cor += this.dy_cor;
-				temp.getListPackages().clear();
-				temp.getListTrucks().clear();
+				temp1.getListPackages().clear();
+				temp1.getListTrucks().clear();
 				
 				
 				for(int i = 0; i < numTr; i++)
 				{
 					Van v = new Van();
-					temp.getListTrucks().add(v);
+					temp1.getListTrucks().add(v);
 					threadBands.add(v);
 					gameThreads.add(v);
 					drawObjects.add(v);
 				}
 				
-				
-				Thread tempTh = new Thread(temp);
-				this.hub.getBranches().add(temp);
+				Thread tempTh = new Thread(temp1);
+				this.hub.getBranches().add(temp1);
 				this.gameThreads.add(tempTh);
-				this.drawObjects.add(temp);
-				this.threadBands.add(temp);
+				this.drawObjects.add(temp1);
+				this.threadBands.add(temp1);
 				
 				
 				
@@ -390,15 +393,45 @@ public class MainOffice extends Thread implements ThreadBand {
 		}
 	}
 	
-	public void Restore()
-	{
-		//restore state;
 
-	}
 
 	// HELP FUCNTION
 	// ------------------------------------------------------------------------------------
+	public void saveToMomento()
+	{
+		
+		this.moment=new Momento(this.hub,this.threadBands,this.gameThreads,this.drawObjects,this.y_cor);
+		
+	}
+	
+	public void getSystemBack()
+	{	
+		
+		//Kill last branch
+	
+		
+		this.drawObjects.remove(this.temp1);
+		this.threadBands.remove(this.temp1);
+		this.gameThreads.remove(this.temp1);
+		temp1.EndMe();
+		//Restore state
+		//-------------------------------
+		this.hub=this.moment.getHubBack();
+		this.threadBands = this.moment.threadBandsSBack();
+		this.gameThreads = this.moment.gameThreadBack();
+		this.drawObjects = this.moment.drawObjectsBack();
+		this.y_cor=this.moment.getYBack();
+		
 
+		
+		for(Thread tr: this.gameThreads)
+		{
+			if(!tr.isAlive())
+				tr.start();
+		}
+		
+		
+	}
 	
 	// default methods
 	// ------------------------------------------------------------------------------------
@@ -422,6 +455,12 @@ public class MainOffice extends Thread implements ThreadBand {
 		} else if (!packages.equals(other.packages))
 			return false;
 		return true;
+	}
+
+	@Override
+	public void EndMe() {
+		// TODO Auto-generated method stub
+		
 	}
 
 

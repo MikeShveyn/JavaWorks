@@ -436,6 +436,12 @@ public class Hub extends Thread implements Node, ThreadBand, Drawable {
 			return true;
 		}
 
+		@Override
+		public void EndMe() {
+			// TODO Auto-generated method stub
+			
+		}
+
 	
 	
 
